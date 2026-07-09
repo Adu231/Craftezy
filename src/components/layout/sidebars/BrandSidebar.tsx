@@ -8,7 +8,6 @@ const NAV_ITEMS: NavItem[] = [
   { label: 'Collaborations', icon: Handshake, href: ROUTES.BRAND_COLLABORATIONS },
   { label: 'Discover Creators', icon: Users, href: ROUTES.BRAND_CREATORS },
   { label: 'Analytics', icon: BarChart3, href: ROUTES.BRAND_ANALYTICS },
-  { label: 'Performance', icon: TrendingUp, href: ROUTES.BRAND_ANALYTICS + '?tab=performance' },
   { label: 'Messages', icon: MessageSquare, href: ROUTES.BRAND_MESSAGES, badge: '6' },
 ];
 

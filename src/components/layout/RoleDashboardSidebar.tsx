@@ -1,10 +1,14 @@
-import { ReactNode } from 'react';
+import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { X, Sparkles, Zap } from 'lucide-react';
+import { X, Sparkles, Zap, CreditCard, ShieldCheck } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 export interface NavItem {
   label: string;
@@ -33,7 +37,38 @@ export default function RoleDashboardSidebar({
   const { pathname } = useLocation();
   const { user } = useAuth();
 
+  // Local storage state to persist upgraded pro status per role
+  const [isUpgraded, setIsUpgraded] = useState(() => {
+    return localStorage.getItem(`craftezy_upgraded_${roleLabel}`) === 'true';
+  });
+
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [cardNumber, setCardNumber] = useState('');
+  const [cardExpiry, setCardExpiry] = useState('');
+  const [cardCvv, setCardCvv] = useState('');
+  
+  const [isDismissed, setIsDismissed] = useState(() => {
+    return localStorage.getItem(`craftezy_upgrade_dismissed_${roleLabel}`) === 'true';
+  });
+
+  const handleDismiss = () => {
+    localStorage.setItem(`craftezy_upgrade_dismissed_${roleLabel}`, 'true');
+    setIsDismissed(true);
+  };
+
   const isActive = (href: string) => pathname === href || pathname.startsWith(href + '/');
+
+  const handleUpgradeSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!cardNumber || !cardExpiry || !cardCvv) {
+      toast.error('Please enter all payment card details');
+      return;
+    }
+    localStorage.setItem(`craftezy_upgraded_${roleLabel}`, 'true');
+    setIsUpgraded(true);
+    toast.success(`Welcome to ${roleLabel} Pro! Your account has been upgraded.`);
+    setShowUpgradeModal(false);
+  };
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
@@ -62,14 +97,17 @@ export default function RoleDashboardSidebar({
             </AvatarFallback>
           </Avatar>
           <div className="min-w-0 flex-1">
-            <p className="font-semibold text-sm truncate">{user?.name}</p>
+            <div className="flex items-center gap-1">
+              <p className="font-semibold text-sm truncate">{user?.name}</p>
+              {isUpgraded && <Zap className="w-3.5 h-3.5 text-yellow-500 fill-current" title="Pro Account" />}
+            </div>
             <div className="flex items-center gap-1.5 mt-0.5">
               <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md text-white capitalize" style={{ backgroundColor: roleColor }}>
-                {roleLabel}
+                {roleLabel} {isUpgraded && 'Pro'}
               </span>
               {user?.isVerified && (
                 <div className="flex items-center gap-0.5 text-secondary">
-                  <Zap className="w-3 h-3 fill-current" />
+                  <ShieldCheck className="w-3.5 h-3.5 text-secondary" />
                   <span className="text-[10px] font-semibold">Verified</span>
                 </div>
               )}
@@ -135,19 +173,27 @@ export default function RoleDashboardSidebar({
       </nav>
 
       {/* Upgrade CTA */}
-      {upgradeHref && (
+      {upgradeHref && !isUpgraded && !isDismissed && (
         <div className="p-4 border-t border-sidebar-border">
-          <div className="bg-gradient-to-br from-primary/10 to-accent/10 border border-primary/20 rounded-xl p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <Zap className="w-4 h-4 text-primary" />
+          <div className="bg-gradient-to-br from-primary/10 to-accent/10 border border-primary/20 rounded-xl p-4 relative">
+            <button 
+              onClick={handleDismiss}
+              className="absolute top-2 right-2 text-muted-foreground hover:text-foreground p-0.5 rounded-md hover:bg-black/5 transition-colors"
+              title="Dismiss"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+            <div className="flex items-center gap-2 mb-2 pr-6">
+              <Zap className="w-4 h-4 text-primary animate-pulse" />
               <span className="text-xs font-semibold text-primary">{upgradeLabel || 'Upgrade Plan'}</span>
             </div>
             <p className="text-xs text-muted-foreground mb-3">{upgradeDesc || '0% fees + unlimited AI'}</p>
-            <Link to={upgradeHref}>
-              <button className="w-full text-xs font-semibold py-2 px-3 rounded-lg gradient-primary text-white hover:opacity-90 transition-opacity">
-                Upgrade Now
-              </button>
-            </Link>
+            <button 
+              onClick={() => setShowUpgradeModal(true)} 
+              className="w-full text-xs font-semibold py-2 px-3 rounded-lg gradient-primary text-white hover:opacity-90 transition-opacity"
+            >
+              Upgrade Now
+            </button>
           </div>
         </div>
       )}
@@ -165,6 +211,84 @@ export default function RoleDashboardSidebar({
           <aside className="relative w-72 h-full bg-sidebar border-r border-sidebar-border shadow-2xl">
             <SidebarContent />
           </aside>
+        </div>
+      )}
+
+      {/* Premium Upgrade Modal */}
+      {showUpgradeModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm animate-in fade-in duration-200">
+          <form onSubmit={handleUpgradeSubmit} className="bg-white rounded-3xl p-6 max-w-md w-full border border-border shadow-craft-lg relative animate-in zoom-in duration-200">
+            <h3 className="font-display font-bold text-xl mb-1 text-foreground flex items-center gap-2">
+              <Zap className="w-5 h-5 text-primary fill-primary" /> Upgrade to {roleLabel} Pro
+            </h3>
+            <p className="text-xs text-muted-foreground mb-4">Unlock professional tooling and premium platform capabilities</p>
+
+            {/* Plan details */}
+            <div className="bg-muted/50 border border-border rounded-2xl p-4 mb-4 text-xs space-y-2">
+              <div className="flex justify-between font-bold text-sm text-foreground mb-1">
+                <span>Pro Membership Plan</span>
+                <span className="text-primary">$29.99/mo</span>
+              </div>
+              <div className="space-y-1 text-muted-foreground">
+                <p>✓ 0% platform transaction fees on custom orders & sales</p>
+                <p>✓ Unlimited AI assistant prompt suggestions</p>
+                <p>✓ Premium analytics and revenue telemetry</p>
+                <p>✓ Direct priority support chat channels</p>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="upg-card-nr">Card Number *</Label>
+                <div className="relative">
+                  <CreditCard className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Input
+                    id="upg-card-nr"
+                    maxLength={19}
+                    value={cardNumber}
+                    onChange={e => setCardNumber(e.target.value.replace(/\D/g, '').replace(/(.{4})/g, '$1 ').trim())}
+                    className="h-11 pl-10 rounded-xl border-border bg-white text-foreground"
+                    placeholder="4000 1234 5678 9010"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <Label htmlFor="upg-card-exp">Expiry Date *</Label>
+                  <Input
+                    id="upg-card-exp"
+                    maxLength={5}
+                    value={cardExpiry}
+                    onChange={e => setCardExpiry(e.target.value.replace(/\D/g, '').replace(/(.{2})/g, '$1/').replace(/\/$/, ''))}
+                    className="h-11 rounded-xl border-border bg-white text-foreground"
+                    placeholder="MM/YY"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="upg-card-cvv">CVV *</Label>
+                  <Input
+                    id="upg-card-cvv"
+                    type="password"
+                    maxLength={3}
+                    value={cardCvv}
+                    onChange={e => setCardCvv(e.target.value.replace(/\D/g, ''))}
+                    className="h-11 rounded-xl border-border bg-white text-foreground"
+                    placeholder="123"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-6 flex justify-end gap-3 pt-3 border-t border-border">
+              <Button type="button" variant="ghost" onClick={() => setShowUpgradeModal(false)} className="rounded-xl">
+                Cancel
+              </Button>
+              <Button type="submit" className="rounded-xl bg-primary text-white hover:bg-primary/90 px-5">
+                Pay & Upgrade
+              </Button>
+            </div>
+          </form>
         </div>
       )}
     </>

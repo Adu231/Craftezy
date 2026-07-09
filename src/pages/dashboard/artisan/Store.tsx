@@ -1,13 +1,50 @@
-import { Store, ExternalLink, Edit2, Image, Star, Package, TrendingUp } from 'lucide-react';
+import { useState } from 'react';
+import { Store, ExternalLink, Edit2, Package, Star, TrendingUp } from 'lucide-react';
 import ArtisanLayout from '@/layouts/role/ArtisanLayout';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 import { MOCK_PRODUCTS } from '@/services/mockData';
 import { toast } from 'sonner';
 
 export default function ArtisanStore() {
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
+  
+  // Store toggles state
+  const [config, setConfig] = useState({
+    acceptCustom: true,
+    showReviews: true,
+    displayInventory: false,
+    holidayMode: false,
+  });
+
+  // Edit store modal state
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [storeName, setStoreName] = useState(user?.storeName || '');
+  const [storeBio, setStoreBio] = useState(user?.bio || '');
+
+  const handleToggle = (key: keyof typeof config, label: string) => {
+    setConfig(prev => {
+      const nextValue = !prev[key];
+      toast.success(`${label} turned ${nextValue ? 'ON' : 'OFF'}`);
+      return { ...prev, [key]: nextValue };
+    });
+  };
+
+  const handleSaveStore = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!storeName.trim()) {
+      toast.error('Store Name cannot be empty');
+      return;
+    }
+    if (updateUser) {
+      updateUser({ storeName, bio: storeBio });
+      toast.success('Store details updated successfully!');
+      setShowEditModal(false);
+    }
+  };
 
   return (
     <ArtisanLayout>
@@ -20,7 +57,7 @@ export default function ArtisanStore() {
           <Button variant="outline" className="rounded-xl gap-2" onClick={() => toast.info('Preview store in new tab coming soon')}>
             <ExternalLink className="w-4 h-4" /> Preview Store
           </Button>
-          <Button className="btn-primary rounded-xl gap-2" onClick={() => toast.info('Store builder coming soon')}>
+          <Button className="btn-primary rounded-xl gap-2" onClick={() => setShowEditModal(true)}>
             <Edit2 className="w-4 h-4" /> Edit Store
           </Button>
         </div>
@@ -66,11 +103,11 @@ export default function ArtisanStore() {
         <div className="bg-card rounded-2xl border border-border p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-semibold">Store Description</h3>
-            <Button variant="ghost" size="sm" className="h-8 text-xs rounded-lg" onClick={() => toast.info('Edit description coming soon')}>
+            <Button variant="ghost" size="sm" className="h-8 text-xs rounded-lg" onClick={() => setShowEditModal(true)}>
               <Edit2 className="w-3 h-3 mr-1" /> Edit
             </Button>
           </div>
-          <p className="text-sm text-muted-foreground leading-relaxed">
+          <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
             {user?.bio || 'No description yet. Add a story to connect with your customers!'}
           </p>
         </div>
@@ -78,18 +115,21 @@ export default function ArtisanStore() {
         {/* Store Settings */}
         <div className="bg-card rounded-2xl border border-border p-6">
           <h3 className="font-semibold mb-4">Store Configuration</h3>
-          <div className="space-y-3">
+          <div className="space-y-4">
             {[
-              { label: 'Accept Custom Orders', enabled: true },
-              { label: 'Show Product Reviews', enabled: true },
-              { label: 'Display Inventory Count', enabled: false },
-              { label: 'Holiday Mode', enabled: false },
-            ].map((s, i) => (
-              <div key={i} className="flex items-center justify-between">
-                <span className="text-sm">{s.label}</span>
-                <button onClick={() => toast.info('Setting updated!')}
-                  className={`w-9 h-5 rounded-full transition-colors relative ${s.enabled ? 'bg-primary' : 'bg-muted'}`}>
-                  <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${s.enabled ? 'translate-x-4' : 'translate-x-0.5'}`} />
+              { key: 'acceptCustom', label: 'Accept Custom Orders', desc: 'Allow customers to request personalized orders' },
+              { key: 'showReviews', label: 'Show Product Reviews', desc: 'Display user ratings on your product lists' },
+              { key: 'displayInventory', label: 'Display Inventory Count', desc: 'Show remaining stock numbers' },
+              { key: 'holidayMode', label: 'Holiday Mode', desc: 'Temporarily pause store sales and checkouts' },
+            ].map(s => (
+              <div key={s.key} className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-semibold">{s.label}</p>
+                  <p className="text-[10px] text-muted-foreground mt-0.5">{s.desc}</p>
+                </div>
+                <button onClick={() => handleToggle(s.key as keyof typeof config, s.label)}
+                  className={`w-9 h-5 rounded-full transition-colors relative ${config[s.key as keyof typeof config] ? 'bg-primary' : 'bg-muted'}`}>
+                  <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${config[s.key as keyof typeof config] ? 'translate-x-4' : 'translate-x-0.5'}`} />
                 </button>
               </div>
             ))}
@@ -118,6 +158,49 @@ export default function ArtisanStore() {
           ))}
         </div>
       </div>
+
+      {/* Edit Store Modal */}
+      {showEditModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm animate-in fade-in duration-200">
+          <form onSubmit={handleSaveStore} className="bg-white rounded-3xl p-6 max-w-md w-full border border-border shadow-craft-lg relative animate-in zoom-in duration-200">
+            <h3 className="font-display font-bold text-xl mb-1 text-foreground">Edit Store Details</h3>
+            <p className="text-xs text-muted-foreground mb-4">Modify the public profile settings of your artisan boutique</p>
+
+            <div className="space-y-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="store-name">Store Name</Label>
+                <Input
+                  id="store-name"
+                  value={storeName}
+                  onChange={e => setStoreName(e.target.value)}
+                  className="h-11 rounded-xl border-border bg-white"
+                  placeholder="Boutique Name"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="store-description">Store Description (Bio)</Label>
+                <textarea
+                  id="store-description"
+                  value={storeBio}
+                  onChange={e => setStoreBio(e.target.value)}
+                  className="w-full h-28 p-3 rounded-xl border border-border bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+                  placeholder="Describe your creative journey, techniques, and style..."
+                />
+              </div>
+            </div>
+
+            <div className="mt-6 flex justify-end gap-3">
+              <Button type="button" variant="ghost" onClick={() => setShowEditModal(false)} className="rounded-xl">
+                Cancel
+              </Button>
+              <Button type="submit" className="rounded-xl bg-primary text-white hover:bg-primary/90 px-5">
+                Save Changes
+              </Button>
+            </div>
+          </form>
+        </div>
+      )}
     </ArtisanLayout>
   );
 }

@@ -6,6 +6,10 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
 import { ROUTES } from '@/constants';
+import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem,
+  DropdownMenuSeparator, DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu';
 
 interface Props {
   children: ReactNode;
@@ -67,10 +71,38 @@ export default function RoleDashboardLayout({ children, sidebar }: Props) {
             />
           </div>
           <div className="ml-auto flex items-center gap-2">
-            <Button variant="ghost" size="icon" className="relative w-9 h-9 rounded-lg">
-              <Bell className="w-4 h-4" />
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-primary rounded-full" />
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="relative w-9 h-9 rounded-lg hover:bg-muted">
+                  <Bell className="w-4 h-4" />
+                  <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-primary rounded-full" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-80 rounded-2xl shadow-craft-lg p-2 bg-white">
+                <div className="px-3 py-2 flex items-center justify-between border-b border-border/50 pb-2 mb-1">
+                  <span className="font-semibold text-sm">Notifications</span>
+                  <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">2 New</span>
+                </div>
+                <DropdownMenuItem className="p-3 cursor-pointer rounded-xl flex items-start gap-2.5 hover:bg-muted">
+                  <span className="text-xl">📦</span>
+                  <div>
+                    <p className="text-xs font-semibold text-foreground">Order #ORD-9842 has been shipped!</p>
+                    <p className="text-[10px] text-muted-foreground mt-0.5">Estimated delivery: 2 days</p>
+                  </div>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="p-3 cursor-pointer rounded-xl flex items-start gap-2.5 hover:bg-muted">
+                  <span className="text-xl">💬</span>
+                  <div>
+                    <p className="text-xs font-semibold text-foreground">New message from Artisan Elena</p>
+                    <p className="text-[10px] text-muted-foreground mt-0.5">"Your custom order specifications are ready..."</p>
+                  </div>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="justify-center text-xs text-primary font-semibold py-2 cursor-pointer rounded-xl hover:bg-muted">
+                  Mark all as read
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
             <div className="flex items-center gap-2 pl-2 border-l border-border">
               <button onClick={handleSwitchDashboard}>
                 <Avatar className="w-8 h-8 cursor-pointer hover:opacity-80 transition-opacity">

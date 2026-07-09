@@ -1,12 +1,24 @@
-import { Users, Search, Star, Mail, BookOpen } from 'lucide-react';
+import { Users, Search, Star, Mail } from 'lucide-react';
 import InstructorLayout from '@/layouts/role/InstructorLayout';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
-const STUDENTS = [
+interface Student {
+  id: string;
+  name: string;
+  email: string;
+  avatar: string;
+  course: string;
+  progress: number;
+  joinedAt: string;
+  rating: number | null;
+}
+
+const INITIAL_STUDENTS: Student[] = [
   { id: 's1', name: 'Alice Johnson', email: 'alice@example.com', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&h=80&fit=crop', course: 'Beginner Macramé', progress: 100, joinedAt: '2026-03-01', rating: 5 },
   { id: 's2', name: 'Bob Williams', email: 'bob@example.com', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80&h=80&fit=crop', course: 'Beginner Macramé', progress: 72, joinedAt: '2026-04-15', rating: null },
   { id: 's3', name: 'Carol Davis', email: 'carol@example.com', avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&h=80&fit=crop', course: 'Natural Dye Workshop', progress: 45, joinedAt: '2026-05-10', rating: 4 },
@@ -15,23 +27,46 @@ const STUDENTS = [
 ];
 
 export default function InstructorStudents() {
+  const [students] = useState<Student[]>(INITIAL_STUDENTS);
   const [search, setSearch] = useState('');
-  const filtered = STUDENTS.filter(s => !search || s.name.toLowerCase().includes(search.toLowerCase()) || s.email.toLowerCase().includes(search.toLowerCase()));
+  
+  // Message Modal State
+  const [messageStudent, setMessageStudent] = useState<Student | null>(null);
+  const [subject, setSubject] = useState('');
+  const [body, setBody] = useState('');
+
+  const handleMessageSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!subject.trim() || !body.trim()) {
+      toast.error('Please fill in both subject and body fields');
+      return;
+    }
+    toast.success(`Email successfully dispatched to ${messageStudent?.name}!`);
+    setMessageStudent(null);
+    setSubject('');
+    setBody('');
+  };
+
+  const filtered = students.filter(s => 
+    s.name.toLowerCase().includes(search.toLowerCase()) || 
+    s.email.toLowerCase().includes(search.toLowerCase()) ||
+    s.course.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <InstructorLayout>
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="font-display font-bold text-2xl sm:text-3xl">Students</h1>
-          <p className="text-muted-foreground text-sm mt-1">{STUDENTS.length} enrolled students</p>
+          <p className="text-muted-foreground text-sm mt-1">{students.length} enrolled students</p>
         </div>
       </div>
 
       <div className="grid grid-cols-3 gap-4 mb-8">
         {[
-          { label: 'Total Students', value: STUDENTS.length, color: 'text-secondary' },
-          { label: 'Completions', value: STUDENTS.filter(s => s.progress === 100).length, color: 'text-green-600' },
-          { label: 'Reviews Given', value: STUDENTS.filter(s => s.rating).length, color: 'text-primary' },
+          { label: 'Total Students', value: students.length, color: 'text-secondary' },
+          { label: 'Completions', value: students.filter(s => s.progress === 100).length, color: 'text-green-600' },
+          { label: 'Reviews Given', value: students.filter(s => s.rating).length, color: 'text-primary' },
         ].map((s, i) => (
           <div key={i} className="bg-card rounded-2xl border border-border p-5 text-center">
             <div className={`font-display font-bold text-3xl ${s.color}`}>{s.value}</div>
@@ -42,7 +77,7 @@ export default function InstructorStudents() {
 
       <div className="relative mb-5">
         <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-        <input type="text" placeholder="Search students..." value={search} onChange={e => setSearch(e.target.value)}
+        <input type="text" placeholder="Search students or course..." value={search} onChange={e => setSearch(e.target.value)}
           className="w-full h-11 pl-10 pr-4 rounded-xl border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 bg-white" />
       </div>
 
@@ -86,7 +121,7 @@ export default function InstructorStudents() {
                   ) : <span className="text-xs text-muted-foreground">No review</span>}
                 </td>
                 <td className="px-3 py-4">
-                  <Button variant="ghost" size="sm" className="h-7 text-xs rounded-lg gap-1" onClick={() => toast.info('Email coming soon')}>
+                  <Button variant="ghost" size="sm" className="h-7 text-xs rounded-lg gap-1 font-semibold" onClick={() => setMessageStudent(student)}>
                     <Mail className="w-3 h-3" /> Message
                   </Button>
                 </td>
@@ -95,6 +130,49 @@ export default function InstructorStudents() {
           </tbody>
         </table>
       </div>
+
+      {/* Message Student Modal */}
+      {messageStudent && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm animate-in fade-in duration-200">
+          <form onSubmit={handleMessageSubmit} className="bg-white rounded-3xl p-6 max-w-md w-full border border-border shadow-craft-lg relative animate-in zoom-in duration-200">
+            <h3 className="font-display font-bold text-xl mb-1 text-foreground">Email Student</h3>
+            <p className="text-xs text-muted-foreground mb-4">Send a notice message directly to {messageStudent.name}</p>
+
+            <div className="space-y-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="msg-subj">Subject *</Label>
+                <Input
+                  id="msg-subj"
+                  value={subject}
+                  onChange={e => setSubject(e.target.value)}
+                  className="h-11 rounded-xl border-border bg-white"
+                  placeholder="Class update or feedback note"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="msg-body">Message Body *</Label>
+                <textarea
+                  id="msg-body"
+                  value={body}
+                  onChange={e => setBody(e.target.value)}
+                  className="w-full h-32 p-3 rounded-xl border border-border bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+                  placeholder="Write your email details here..."
+                />
+              </div>
+            </div>
+
+            <div className="mt-6 flex justify-end gap-3 pt-3 border-t border-border">
+              <Button type="button" variant="ghost" onClick={() => setMessageStudent(null)} className="rounded-xl">
+                Cancel
+              </Button>
+              <Button type="submit" className="rounded-xl bg-primary text-white hover:bg-primary/90 px-5">
+                Send Message
+              </Button>
+            </div>
+          </form>
+        </div>
+      )}
     </InstructorLayout>
   );
 }

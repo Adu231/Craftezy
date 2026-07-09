@@ -19,6 +19,10 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const { isAuthenticated, user, logout } = useAuth();
   const dashboardRoute = user ? getDashboardRoute(user.role) : '/login';
+  const handleLogout = () => {
+    logout();
+    navigate(ROUTES.LOGIN);
+  };
   const { totalItems } = useCart();
   const { count: wishlistCount } = useWishlist();
   const navigate = useNavigate();
@@ -77,6 +81,17 @@ export default function Navbar() {
               <Search className="w-4 h-4" />
             </Button>
 
+            <Link to="/cart">
+              <Button variant="ghost" size="icon" className="relative w-9 h-9 rounded-lg hover:bg-muted flex">
+                <ShoppingBag className="w-4 h-4" />
+                {totalItems > 0 && (
+                  <Badge className="absolute -top-1 -right-1 h-4 w-4 p-0 flex items-center justify-center text-[10px] bg-primary">
+                    {totalItems}
+                  </Badge>
+                )}
+              </Button>
+            </Link>
+
             {isAuthenticated ? (
               <>
                 <Link to={ROUTES.MARKETPLACE}>
@@ -85,16 +100,6 @@ export default function Navbar() {
                     {wishlistCount > 0 && (
                       <Badge className="absolute -top-1 -right-1 h-4 w-4 p-0 flex items-center justify-center text-[10px] bg-primary">
                         {wishlistCount}
-                      </Badge>
-                    )}
-                  </Button>
-                </Link>
-                <Link to={ROUTES.MARKETPLACE}>
-                  <Button variant="ghost" size="icon" className="relative w-9 h-9 rounded-lg hover:bg-muted hidden md:flex">
-                    <ShoppingBag className="w-4 h-4" />
-                    {totalItems > 0 && (
-                      <Badge className="absolute -top-1 -right-1 h-4 w-4 p-0 flex items-center justify-center text-[10px] bg-primary">
-                        {totalItems}
                       </Badge>
                     )}
                   </Button>
@@ -139,7 +144,7 @@ export default function Navbar() {
                       <Link to={ROUTES.DASHBOARD_SETTINGS} className="cursor-pointer">Settings</Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={logout} className="text-destructive cursor-pointer">
+                    <DropdownMenuItem onClick={handleLogout} className="text-destructive cursor-pointer">
                       Sign Out
                     </DropdownMenuItem>
                   </DropdownMenuContent>
@@ -202,7 +207,7 @@ export default function Navbar() {
                   <Link to={dashboardRoute}>
                     <Button className="w-full rounded-xl btn-primary">Go to Dashboard</Button>
                   </Link>
-                  <Button variant="outline" className="w-full rounded-xl" onClick={logout}>Sign Out</Button>
+                  <Button variant="outline" className="w-full rounded-xl" onClick={handleLogout}>Sign Out</Button>
                 </>
               ) : (
                 <>

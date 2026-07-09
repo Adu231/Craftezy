@@ -52,7 +52,15 @@ export default function LearnerCertificates() {
                     <p className="text-sm text-muted-foreground">Instructor: {cert.course.instructor.name}</p>
                   </div>
                   <div className="flex gap-2">
-                    <Button variant="outline" className="rounded-xl gap-2" onClick={() => toast.info('Download feature coming soon')}>
+                    <Button variant="outline" className="rounded-xl gap-2" onClick={() => {
+                      toast.success('Starting certificate download...');
+                      const link = document.createElement('a');
+                      link.href = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800';
+                      link.download = `Certificate_${cert.id}.jpg`;
+                      document.body.appendChild(link);
+                      link.click();
+                      document.body.removeChild(link);
+                    }}>
                       <Download className="w-4 h-4" /> Download
                     </Button>
                     <Button variant="outline" className="rounded-xl gap-2" onClick={() => toast.success('Link copied!')}>

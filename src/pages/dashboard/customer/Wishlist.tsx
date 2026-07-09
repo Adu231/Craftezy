@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Heart, ShoppingBag, Trash2, Star } from 'lucide-react';
 import CustomerLayout from '@/layouts/role/CustomerLayout';
 import { MOCK_PRODUCTS } from '@/services/mockData';
@@ -6,8 +6,11 @@ import { ROUTES } from '@/constants';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { useState } from 'react';
+import { useCart } from '@/hooks/useCart';
 
 export default function CustomerWishlist() {
+  const { addItem } = useCart();
+  const navigate = useNavigate();
   const [wishlist, setWishlist] = useState(MOCK_PRODUCTS.slice(0, 5));
 
   const removeItem = (id: string) => {
@@ -64,7 +67,11 @@ export default function CustomerWishlist() {
                     {product.originalPrice && <span className="text-xs text-muted-foreground line-through ml-1.5">${product.originalPrice}</span>}
                   </div>
                   <Button size="sm" className="btn-primary rounded-xl h-8 text-xs gap-1"
-                    onClick={() => toast.success(`"${product.title}" added to cart`)}>
+                    onClick={() => {
+                      addItem(product);
+                      toast.success(`"${product.title}" added to cart`);
+                      navigate('/cart');
+                    }}>
                     <ShoppingBag className="w-3 h-3" /> Add
                   </Button>
                 </div>

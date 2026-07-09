@@ -93,7 +93,7 @@ export const MOCK_COURSES: Course[] = [
     instructor: ARTISANS[3], price: 89, duration: '12 hours', lessons: 36, level: 'beginner', category: 'Pottery', rating: 4.8, studentsCount: 1560, isFeatured: true, tags: ['pottery', 'wheel', 'ceramics'], skills: ['Centering', 'Opening', 'Pulling walls', 'Trimming'], createdAt: '2023-11-20',
   },
   {
-    id: 'c3', title: 'Silversmithing: Create Your First Jewelry Collection', description: 'From raw silver sheet to polished jewelry. Learn sawing, soldering, setting stones and finishing.', thumbnail: 'https://images.unsplash.com/photo-1601121141461-9d6647bef0a0?w=600&h=400&fit=crop',
+    id: 'c3', title: 'Silversmithing: Create Your First Jewelry Collection', description: 'From raw silver sheet to polished jewelry. Learn sawing, soldering, setting stones and finishing.', thumbnail: 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=600&h=400&fit=crop',
     instructor: ARTISANS[2], price: 129, originalPrice: 160, duration: '18 hours', lessons: 52, level: 'intermediate', category: 'Jewelry Making', rating: 4.7, studentsCount: 890, isFeatured: true, tags: ['silver', 'jewelry', 'metalwork'], skills: ['Sawing', 'Soldering', 'Stone setting', 'Polishing'], createdAt: '2024-02-01',
   },
   {
@@ -120,7 +120,7 @@ export const MOCK_WORKSHOPS: Workshop[] = [
     instructor: ARTISANS[0], price: 35, date: '2026-07-18', time: '3:00 PM', duration: '2 hours', maxParticipants: 30, enrolledCount: 24, isOnline: true, category: 'Macramé', tags: ['macrame', 'online', 'live'],
   },
   {
-    id: 'w3', title: 'Introduction to Silversmithing', description: 'Learn the basics of working with silver: sawing, filing, soldering and create a pendant.', thumbnail: 'https://images.unsplash.com/photo-1601121141461-9d6647bef0a0?w=600&h=400&fit=crop',
+    id: 'w3', title: 'Introduction to Silversmithing', description: 'Learn the basics of working with silver: sawing, filing, soldering and create a pendant.', thumbnail: 'https://images.unsplash.com/photo-1603006905003-be475563bc59?w=600&h=400&fit=crop',
     instructor: ARTISANS[2], price: 145, date: '2026-07-25', time: '11:00 AM', duration: '4 hours', maxParticipants: 8, enrolledCount: 5, isOnline: false, location: 'Brooklyn Jewelry Studio, NY', category: 'Jewelry', tags: ['silver', 'jewelry', 'in-person'],
   },
   {

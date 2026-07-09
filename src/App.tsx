@@ -4,6 +4,7 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from '@/contexts/AuthContext';
+import { CartProvider } from '@/contexts/CartContext';
 
 // Public Pages
 import Index from '@/pages/Index';
@@ -14,6 +15,8 @@ import Marketplace from '@/pages/marketplace/Marketplace';
 import Learn from '@/pages/learn/Learn';
 import Workshops from '@/pages/workshops/Workshops';
 import Community from '@/pages/community/Community';
+import Cart from '@/pages/cart/Cart';
+import Checkout from '@/pages/checkout/Checkout';
 
 // ─── CUSTOMER DASHBOARD ───────────────────────────────
 import CustomerOverview from '@/pages/dashboard/customer/Overview';
@@ -96,9 +99,10 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <AuthProvider>
-        <Toaster />
-        <Sonner richColors position="top-right" />
-        <BrowserRouter>
+        <CartProvider>
+          <Toaster />
+          <Sonner richColors position="top-right" />
+          <BrowserRouter>
           <Routes>
             {/* ── Public Routes ── */}
             <Route path="/" element={<Index />} />
@@ -109,6 +113,8 @@ const App = () => (
             <Route path="/workshops" element={<Workshops />} />
             <Route path="/workshops/:id" element={<Workshops />} />
             <Route path="/community" element={<Community />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/checkout" element={<Checkout />} />
 
             {/* ── Auth Routes ── */}
             <Route path="/login" element={<Login />} />
@@ -216,9 +222,10 @@ const App = () => (
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
-      </AuthProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
+      </CartProvider>
+    </AuthProvider>
+  </TooltipProvider>
+</QueryClientProvider>
 );
 
 export default App;

@@ -7,7 +7,6 @@ const NAV_ITEMS: NavItem[] = [
   { label: 'Overview', icon: Home, href: ROUTES.CUSTOMER_OVERVIEW },
   { label: 'My Orders', icon: ShoppingBag, href: ROUTES.CUSTOMER_ORDERS, badge: '2' },
   { label: 'Wishlist', icon: Heart, href: ROUTES.CUSTOMER_WISHLIST },
-  { label: 'Track Delivery', icon: MapPin, href: ROUTES.CUSTOMER_ORDERS + '?tab=tracking' },
   { label: 'My Reviews', icon: Star, href: ROUTES.CUSTOMER_REVIEWS },
 ];
 

@@ -35,7 +35,7 @@ export default function CTASection() {
                 </Button>
               </Link>
               <Link to={ROUTES.MARKETPLACE}>
-                <Button size="lg" variant="outline" className="border-white/40 text-white hover:bg-white/15 rounded-xl h-12 px-8 font-semibold text-base">
+                <Button size="lg" variant="outline" className="border-white/40 text-primary hover:bg-white/15 rounded-xl h-12 px-8 font-semibold text-base">
                   Explore Crafts
                 </Button>
               </Link>

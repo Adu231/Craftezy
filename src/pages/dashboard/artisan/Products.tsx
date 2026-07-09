@@ -1,18 +1,116 @@
 import { useState } from 'react';
-import { Plus, Search, Edit2, Trash2, Package, Star } from 'lucide-react';
+import { Plus, Search, Edit2, Trash2, Package, Star, Upload } from 'lucide-react';
 import ArtisanLayout from '@/layouts/role/ArtisanLayout';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 import { MOCK_PRODUCTS } from '@/services/mockData';
+import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { Product } from '@/types';
 
 const FILTERS = ['All', 'Active', 'Bestseller', 'Featured', 'Low Stock'];
+const CATEGORIES = ['Pottery & Ceramics', 'Textile & Fiber Arts', 'Woodworking', 'Jewelry Making', 'Leather Crafting', 'Glassblowing'];
 
 export default function ArtisanProducts() {
+  const { user } = useAuth();
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('All');
-  const [products, setProducts] = useState(MOCK_PRODUCTS);
+  const [products, setProducts] = useState<Product[]>(MOCK_PRODUCTS);
+
+  // Modal forms states
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+
+  // Form Fields
+  const [title, setTitle] = useState('');
+  const [category, setCategory] = useState(CATEGORIES[0]);
+  const [price, setPrice] = useState('');
+  const [stock, setStock] = useState('');
+  const [description, setDescription] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImageUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+      toast.success('Image loaded successfully');
+    }
+  };
+
+  const handleOpenAdd = () => {
+    setTitle('');
+    setCategory(CATEGORIES[0]);
+    setPrice('');
+    setStock('');
+    setDescription('');
+    setImageUrl('');
+    setShowAddModal(true);
+  };
+
+  const handleOpenEdit = (p: Product) => {
+    setSelectedProduct(p);
+    setTitle(p.title);
+    setCategory(p.category);
+    setPrice(p.price.toString());
+    setStock(p.stock.toString());
+    setDescription(p.description);
+    setImageUrl(p.images[0]);
+    setShowEditModal(true);
+  };
+
+  const handleAddProduct = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!title || !price || !stock) {
+      toast.error('Please fill in all required fields');
+      return;
+    }
+    const newProduct: Product = {
+      id: `prod_${Date.now()}`,
+      title,
+      description: description || 'No description provided.',
+      price: parseFloat(price),
+      category,
+      tags: [category.split(' ')[0]],
+      artisan: { name: user?.name || 'Artisan', storeName: user?.storeName },
+      rating: 5.0,
+      reviewCount: 0,
+      stock: parseInt(stock),
+      isCustomOrderAvailable: true,
+      createdAt: new Date().toISOString(),
+      shippingDays: 3,
+      images: [imageUrl || 'https://images.unsplash.com/photo-1612196808214-b8e1d6145a8c?w=400&h=400&fit=crop'],
+    };
+    setProducts(prev => [newProduct, ...prev]);
+    toast.success('Product added successfully!');
+    setShowAddModal(false);
+  };
+
+  const handleEditProduct = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedProduct || !title || !price || !stock) {
+      toast.error('Please fill in all required fields');
+      return;
+    }
+    setProducts(prev => prev.map(p => p.id === selectedProduct.id ? {
+      ...p,
+      title,
+      category,
+      price: parseFloat(price),
+      stock: parseInt(stock),
+      description,
+      images: [imageUrl || p.images[0]]
+    } : p));
+    toast.success('Product details updated!');
+    setShowEditModal(false);
+  };
 
   const filtered = products.filter(p => {
     const matchSearch = !search || p.title.toLowerCase().includes(search.toLowerCase());
@@ -31,7 +129,7 @@ export default function ArtisanProducts() {
           <h1 className="font-display font-bold text-2xl sm:text-3xl">Products</h1>
           <p className="text-muted-foreground text-sm mt-1">{products.length} listings in your store</p>
         </div>
-        <Button className="btn-primary rounded-xl gap-2" onClick={() => toast.info('Add product form coming soon')}>
+        <Button className="btn-primary rounded-xl gap-2" onClick={handleOpenAdd}>
           <Plus className="w-4 h-4" /> Add Product
         </Button>
       </div>
@@ -117,7 +215,7 @@ export default function ArtisanProducts() {
                 </td>
                 <td className="px-3 py-4">
                   <div className="flex items-center gap-1">
-                    <Button variant="ghost" size="icon" className="w-8 h-8 rounded-lg" onClick={() => toast.info('Edit product coming soon')}>
+                    <Button variant="ghost" size="icon" className="w-8 h-8 rounded-lg" onClick={() => handleOpenEdit(p)}>
                       <Edit2 className="w-3.5 h-3.5" />
                     </Button>
                     <Button variant="ghost" size="icon" className="w-8 h-8 rounded-lg text-red-400 hover:text-red-600"
@@ -137,6 +235,153 @@ export default function ArtisanProducts() {
           </div>
         )}
       </div>
+
+      {/* Add Product Modal */}
+      {showAddModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm animate-in fade-in duration-200">
+          <form onSubmit={handleAddProduct} className="bg-white rounded-3xl p-6 max-w-lg w-full border border-border shadow-craft-lg relative max-h-[90vh] overflow-y-auto animate-in zoom-in duration-200">
+            <h3 className="font-display font-bold text-xl mb-1 text-foreground">Add New Product</h3>
+            <p className="text-xs text-muted-foreground mb-4">Post a new handcrafted listing to your store inventory</p>
+
+            <div className="space-y-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="add-title">Product Title *</Label>
+                <Input id="add-title" value={title} onChange={e => setTitle(e.target.value)} placeholder="Handwoven Linen Scarf" />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <Label htmlFor="add-price">Price ($) *</Label>
+                  <Input id="add-price" type="number" step="0.01" value={price} onChange={e => setPrice(e.target.value)} placeholder="45.00" />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="add-stock">Stock Qty *</Label>
+                  <Input id="add-stock" type="number" value={stock} onChange={e => setStock(e.target.value)} placeholder="10" />
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="add-category">Category</Label>
+                <select id="add-category" value={category} onChange={e => setCategory(e.target.value)}
+                  className="w-full h-10 px-3 rounded-xl border border-border bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary/20">
+                  {CATEGORIES.map(cat => (
+                    <option key={cat} value={cat}>{cat}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="add-description">Description</Label>
+                <textarea id="add-description" value={description} onChange={e => setDescription(e.target.value)}
+                  className="w-full h-24 p-3 rounded-xl border border-border bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+                  placeholder="Tell customers about the materials, sizes, and craftsmanship..."
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Product Image *</Label>
+                <div className="flex items-center gap-4">
+                  <label className="flex flex-col items-center justify-center w-24 h-24 border border-dashed border-border rounded-xl cursor-pointer hover:bg-muted/30 transition-colors shrink-0">
+                    <Upload className="w-5 h-5 text-muted-foreground mb-1" />
+                    <span className="text-[10px] text-muted-foreground">Upload</span>
+                    <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
+                  </label>
+                  {imageUrl ? (
+                    <div className="w-24 h-24 rounded-xl overflow-hidden border border-border relative">
+                      <img src={imageUrl} alt="" className="w-full h-full object-cover" />
+                      <button type="button" onClick={() => setImageUrl('')} className="absolute inset-0 bg-black/40 text-white font-bold text-xs flex items-center justify-center">Remove</button>
+                    </div>
+                  ) : (
+                    <div className="text-[10px] text-muted-foreground">No image uploaded. (Default placeholder will be used if empty)</div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-6 flex justify-end gap-3 border-t border-border pt-4">
+              <Button type="button" variant="ghost" onClick={() => setShowAddModal(false)} className="rounded-xl">
+                Cancel
+              </Button>
+              <Button type="submit" className="rounded-xl bg-primary text-white hover:bg-primary/90 px-5">
+                Save Product
+              </Button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* Edit Product Modal */}
+      {showEditModal && selectedProduct && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm animate-in fade-in duration-200">
+          <form onSubmit={handleEditProduct} className="bg-white rounded-3xl p-6 max-w-lg w-full border border-border shadow-craft-lg relative max-h-[90vh] overflow-y-auto animate-in zoom-in duration-200">
+            <h3 className="font-display font-bold text-xl mb-1 text-foreground">Edit Product Details</h3>
+            <p className="text-xs text-muted-foreground mb-4">Modify existing product details of your store item</p>
+
+            <div className="space-y-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="edit-title">Product Title *</Label>
+                <Input id="edit-title" value={title} onChange={e => setTitle(e.target.value)} />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <Label htmlFor="edit-price">Price ($) *</Label>
+                  <Input id="edit-price" type="number" step="0.01" value={price} onChange={e => setPrice(e.target.value)} />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="edit-stock">Stock Qty *</Label>
+                  <Input id="edit-stock" type="number" value={stock} onChange={e => setStock(e.target.value)} />
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="edit-category">Category</Label>
+                <select id="edit-category" value={category} onChange={e => setCategory(e.target.value)}
+                  className="w-full h-10 px-3 rounded-xl border border-border bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary/20">
+                  {CATEGORIES.map(cat => (
+                    <option key={cat} value={cat}>{cat}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="edit-description">Description</Label>
+                <textarea id="edit-description" value={description} onChange={e => setDescription(e.target.value)}
+                  className="w-full h-24 p-3 rounded-xl border border-border bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Product Image</Label>
+                <div className="flex items-center gap-4">
+                  <label className="flex flex-col items-center justify-center w-24 h-24 border border-dashed border-border rounded-xl cursor-pointer hover:bg-muted/30 transition-colors shrink-0">
+                    <Upload className="w-5 h-5 text-muted-foreground mb-1" />
+                    <span className="text-[10px] text-muted-foreground">Upload</span>
+                    <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
+                  </label>
+                  {imageUrl ? (
+                    <div className="w-24 h-24 rounded-xl overflow-hidden border border-border relative">
+                      <img src={imageUrl} alt="" className="w-full h-full object-cover" />
+                      <button type="button" onClick={() => setImageUrl('')} className="absolute inset-0 bg-black/40 text-white font-bold text-xs flex items-center justify-center">Remove</button>
+                    </div>
+                  ) : (
+                    <div className="text-[10px] text-muted-foreground">No image.</div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-6 flex justify-end gap-3 border-t border-border pt-4">
+              <Button type="button" variant="ghost" onClick={() => setShowEditModal(false)} className="rounded-xl">
+                Cancel
+              </Button>
+              <Button type="submit" className="rounded-xl bg-primary text-white hover:bg-primary/90 px-5">
+                Save Changes
+              </Button>
+            </div>
+          </form>
+        </div>
+      )}
     </ArtisanLayout>
   );
 }

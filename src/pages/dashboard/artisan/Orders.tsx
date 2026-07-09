@@ -7,12 +7,16 @@ import { MOCK_ORDERS } from '@/services/mockData';
 import { ORDER_STATUSES } from '@/constants';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { Order } from '@/types';
 
 const STATUS_TABS = ['All', 'Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'];
 
 export default function ArtisanOrders() {
   const [search, setSearch] = useState('');
   const [activeTab, setActiveTab] = useState('All');
+  
+  // Details Modal State
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
   const filtered = MOCK_ORDERS.filter(o => {
     const matchSearch = !search || o.product.title.toLowerCase().includes(search.toLowerCase()) || o.customer.name.toLowerCase().includes(search.toLowerCase());
@@ -27,7 +31,7 @@ export default function ArtisanOrders() {
           <h1 className="font-display font-bold text-2xl sm:text-3xl">Orders</h1>
           <p className="text-muted-foreground text-sm mt-1">{MOCK_ORDERS.length} total orders</p>
         </div>
-        <Button variant="outline" className="rounded-xl gap-2">
+        <Button variant="outline" className="rounded-xl gap-2" onClick={() => toast.info('Export functionality coming soon')}>
           <Filter className="w-4 h-4" /> Export
         </Button>
       </div>
@@ -84,7 +88,7 @@ export default function ArtisanOrders() {
                 <div className="text-right shrink-0">
                   <div className="font-bold text-lg text-primary">${order.totalPrice}</div>
                   <Button variant="ghost" size="sm" className="mt-2 h-7 text-xs rounded-lg gap-1"
-                    onClick={() => toast.info('Order details coming soon')}>
+                    onClick={() => setSelectedOrder(order)}>
                     <Eye className="w-3 h-3" /> Details
                   </Button>
                 </div>
@@ -93,6 +97,71 @@ export default function ArtisanOrders() {
           );
         })}
       </div>
+
+      {/* Order Details Modal */}
+      {selectedOrder && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white rounded-3xl p-6 max-w-md w-full border border-border shadow-craft-lg relative animate-in zoom-in duration-200">
+            <h3 className="font-display font-bold text-xl mb-4 text-foreground">Artisan Order Details</h3>
+            <div className="space-y-4 text-sm">
+              <div className="flex items-center gap-3">
+                <div className="w-14 h-14 rounded-xl overflow-hidden shrink-0 border border-border">
+                  <img src={selectedOrder.product.images[0]} alt="" className="w-full h-full object-cover" />
+                </div>
+                <div className="min-w-0">
+                  <h4 className="font-semibold text-foreground truncate">{selectedOrder.product.title}</h4>
+                  <p className="text-xs text-muted-foreground">Order #{selectedOrder.id}</p>
+                </div>
+              </div>
+
+              <div className="border-t border-border pt-3 space-y-2">
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span>Buyer</span>
+                  <span className="font-semibold text-foreground">{selectedOrder.customer.name}</span>
+                </div>
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span>Buyer Email</span>
+                  <span className="text-foreground">{selectedOrder.customer.email || 'customer@craftezy.com'}</span>
+                </div>
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span>Status</span>
+                  <span className="font-semibold capitalize text-foreground">{selectedOrder.status}</span>
+                </div>
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span>Quantity Ordered</span>
+                  <span className="text-foreground">{selectedOrder.quantity}</span>
+                </div>
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span>Total Revenue</span>
+                  <span className="font-bold text-primary">${selectedOrder.totalPrice}</span>
+                </div>
+              </div>
+
+              <div className="border-t border-border pt-3">
+                <p className="text-xs font-semibold text-foreground mb-1">Destination Address</p>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  123 Creative Lane, Austin, TX 78701
+                </p>
+              </div>
+
+              {selectedOrder.trackingNumber && (
+                <div className="border-t border-border pt-3">
+                  <p className="text-xs font-semibold text-foreground mb-1">Shipping Details</p>
+                  <p className="text-xs text-secondary font-medium">
+                    Courier: USPS · Tracking Reference: {selectedOrder.trackingNumber}
+                  </p>
+                </div>
+              )}
+            </div>
+
+            <div className="mt-6 flex justify-end">
+              <Button onClick={() => setSelectedOrder(null)} className="rounded-xl px-5">
+                Close
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </ArtisanLayout>
   );
 }

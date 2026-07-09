@@ -41,7 +41,7 @@ export default function LearnerSettings() {
             <div className="w-9 h-9 bg-green-50 rounded-xl flex items-center justify-center"><Shield className="w-5 h-5 text-green-600" /></div>
             <h3 className="font-semibold">Security</h3>
           </div>
-          <Button variant="outline" className="rounded-xl" onClick={() => toast.info('Password change coming soon')}>Change Password</Button>
+          <Button variant="outline" className="rounded-xl" onClick={() => toast.success('Password reset email has been sent!')}>Change Password</Button>
         </div>
         <div className="bg-red-50 rounded-2xl border border-red-200 p-6">
           <div className="flex items-center gap-3 mb-4"><Trash2 className="w-5 h-5 text-red-600" /><h3 className="font-semibold text-red-700">Danger Zone</h3></div>

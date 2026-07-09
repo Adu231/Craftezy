@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Heart, Star, ShoppingBag, Zap } from 'lucide-react';
 import { Product } from '@/types';
 import { useCart } from '@/hooks/useCart';
@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface Props {
   product: Product;
@@ -17,17 +18,30 @@ export default function ProductCard({ product, variant = 'default' }: Props) {
   const { addItem } = useCart();
   const { toggle, isInWishlist } = useWishlist();
   const inWishlist = isInWishlist(product.id);
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    if (!isAuthenticated) {
+      toast.error('Please sign in to add items to your cart');
+      navigate('/login');
+      return;
+    }
     addItem(product);
     toast.success(`Added "${product.title}" to cart`);
+    navigate('/cart');
   };
 
   const handleWishlist = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    if (!isAuthenticated) {
+      toast.error('Please sign in to add items to your wishlist');
+      navigate('/login');
+      return;
+    }
     toggle(product);
     toast.success(inWishlist ? 'Removed from wishlist' : 'Added to wishlist');
   };

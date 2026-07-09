@@ -1,14 +1,23 @@
 import { useState } from 'react';
-import { Search, GraduationCap, Users, BookOpen, Award } from 'lucide-react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { Search, GraduationCap, Users, BookOpen, Award, ArrowLeft, Star, Clock, Shield, Check } from 'lucide-react';
 import MainLayout from '@/layouts/MainLayout';
 import CourseCard from '@/components/features/CourseCard';
 import { MOCK_COURSES } from '@/services/mockData';
 import { COURSE_CATEGORIES } from '@/constants';
 import { cn } from '@/lib/utils';
+import { useAuth, getDashboardRoute } from '@/contexts/AuthContext';
+import { toast } from 'sonner';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 
 const LEVELS = ['All Levels', 'Beginner', 'Intermediate', 'Advanced'];
 
 export default function Learn() {
+  const { id } = useParams<{ id?: string }>();
+  const navigate = useNavigate();
+  const { isAuthenticated, user } = useAuth();
+
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedLevel, setSelectedLevel] = useState('All Levels');
@@ -19,6 +28,174 @@ export default function Learn() {
     const matchesLevel = selectedLevel === 'All Levels' || c.level === selectedLevel.toLowerCase();
     return matchesSearch && matchesCategory && matchesLevel;
   });
+
+  const selectedCourse = MOCK_COURSES.find(c => c.id === id);
+
+  if (selectedCourse) {
+    const relatedCourses = MOCK_COURSES.filter(c => c.category === selectedCourse.category && c.id !== selectedCourse.id).slice(0, 3);
+
+    return (
+      <MainLayout>
+        <div className="min-h-screen bg-gradient-to-b from-cream to-white py-12">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <Link to="/learn" className="inline-flex items-center gap-2 text-secondary font-semibold hover:underline mb-8">
+              <ArrowLeft className="w-4 h-4" />
+              Back to Learn Academy
+            </Link>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 bg-white rounded-3xl p-8 border border-border shadow-craft-sm mb-16">
+              {/* Course Image */}
+              <div>
+                <div className="aspect-video rounded-2xl overflow-hidden bg-muted border border-border mb-6">
+                  <img
+                    src={selectedCourse.thumbnail}
+                    alt={selectedCourse.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="flex gap-3 mb-6">
+                  <Badge className="bg-secondary/10 text-secondary border-none font-semibold text-xs px-2.5 py-1 hover:bg-secondary/20">
+                    {selectedCourse.category}
+                  </Badge>
+                  <Badge className="bg-muted text-muted-foreground border-none font-semibold text-xs px-2.5 py-1 capitalize">
+                    {selectedCourse.level}
+                  </Badge>
+                </div>
+
+                <h3 className="font-semibold text-base text-foreground mb-3">About this Course:</h3>
+                <p className="text-muted-foreground text-base leading-relaxed">
+                  {selectedCourse.description}
+                </p>
+
+                {selectedCourse.skills && (
+                  <div className="mt-6">
+                    <h4 className="font-semibold text-sm text-foreground mb-2.5">Skills you will master:</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedCourse.skills.map(s => (
+                        <span key={s} className="bg-muted text-muted-foreground text-xs px-3 py-1 rounded-full border border-border">
+                          {s}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Course Pricing & Details */}
+              <div className="flex flex-col justify-between">
+                <div>
+                  <h1 className="font-display font-bold text-3xl sm:text-4xl text-foreground mb-6 leading-tight">
+                    {selectedCourse.title}
+                  </h1>
+
+                  {/* Course Details Card */}
+                  <div className="bg-muted/50 border border-border rounded-2xl p-6 space-y-4 mb-8">
+                    <div className="flex items-center gap-3.5">
+                      <Clock className="w-5 h-5 text-secondary" />
+                      <div>
+                        <p className="text-xs text-muted-foreground">Duration</p>
+                        <p className="text-sm font-semibold text-foreground">{selectedCourse.duration}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3.5">
+                      <BookOpen className="w-5 h-5 text-secondary" />
+                      <div>
+                        <p className="text-xs text-muted-foreground">Lessons</p>
+                        <p className="text-sm font-semibold text-foreground">{selectedCourse.lessons} video lessons</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3.5">
+                      <Star className="w-5 h-5 text-mustard fill-current" />
+                      <div>
+                        <p className="text-xs text-muted-foreground">Rating</p>
+                        <p className="text-sm font-semibold text-foreground">{selectedCourse.rating} stars</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3.5">
+                      <Users className="w-5 h-5 text-secondary" />
+                      <div>
+                        <p className="text-xs text-muted-foreground">Enrolled Students</p>
+                        <p className="text-sm font-semibold text-foreground">{selectedCourse.studentsCount.toLocaleString()} students</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Instructor Info */}
+                  <div className="flex items-center gap-4 p-4 rounded-2xl bg-muted/40 border border-border mb-8">
+                    <div className="w-12 h-12 rounded-xl overflow-hidden">
+                      <img src={selectedCourse.instructor.avatar} alt={selectedCourse.instructor.name} className="w-full h-full object-cover" />
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground">Taught by Master Artisan</p>
+                      <h5 className="font-semibold text-sm text-foreground">{selectedCourse.instructor.name}</h5>
+                      <p className="text-[10px] text-muted-foreground">{selectedCourse.instructor.storeName}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div className="space-y-4">
+                  <div className="flex items-baseline justify-between mb-2">
+                    <span className="text-sm text-muted-foreground">Total Price</span>
+                    <span className="text-3xl font-bold text-foreground">
+                      {selectedCourse.price === 0 ? 'Free' : `$${selectedCourse.price}`}
+                    </span>
+                  </div>
+
+                  <Button
+                    onClick={() => {
+                      if (!isAuthenticated) {
+                        toast.error('Please sign in to enroll in this course');
+                        navigate('/login');
+                        return;
+                      }
+                      if (user?.role === 'learner' || user?.role === 'instructor') {
+                        toast.success(`Enrolled in "${selectedCourse.title}" successfully! Check your Courses.`);
+                        navigate('/dashboard/learner/courses');
+                      } else {
+                        toast.success(`Enrolled in "${selectedCourse.title}" successfully!`);
+                        const dashboardRoute = getDashboardRoute(user!.role);
+                        navigate(dashboardRoute);
+                      }
+                    }}
+                    size="lg"
+                    className="w-full bg-secondary hover:bg-secondary/90 text-white rounded-xl h-14 font-semibold text-base shadow-lg"
+                  >
+                    Enroll Now
+                  </Button>
+
+                  <div className="flex items-center gap-4 text-xs text-muted-foreground justify-center py-2">
+                    <span className="flex items-center gap-1">
+                      <Shield className="w-3.5 h-3.5 text-secondary" /> Lifetime access & updates
+                    </span>
+                    <span>•</span>
+                    <span className="flex items-center gap-1">
+                      <Check className="w-3.5 h-3.5 text-secondary" /> Certificate of completion included
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Related Courses */}
+            {relatedCourses.length > 0 && (
+              <div>
+                <h3 className="font-display font-bold text-2xl text-foreground mb-6">More courses in {selectedCourse.category}</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {relatedCourses.map(c => (
+                    <CourseCard key={c.id} course={c} />
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </MainLayout>
+    );
+  }
 
   return (
     <MainLayout>

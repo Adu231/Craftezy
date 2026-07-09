@@ -4,14 +4,34 @@ import { MOCK_COURSES } from '@/services/mockData';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
-const ENROLLED = MOCK_COURSES.slice(0, 3).map((c, i) => ({ ...c, progress: [35, 72, 100][i] }));
-const AVAILABLE = MOCK_COURSES.slice(3);
-
 export default function LearnerCourses() {
+  const navigate = useNavigate();
   const [tab, setTab] = useState<'enrolled' | 'browse'>('enrolled');
   const [search, setSearch] = useState('');
+
+  // Manage enrolled / browse list dynamically
+  const [enrolled, setEnrolled] = useState(
+    MOCK_COURSES.slice(0, 3).map((c, i) => ({ ...c, progress: [35, 72, 100][i] }))
+  );
+  const [available, setAvailable] = useState(MOCK_COURSES.slice(3));
+
+  const handleEnroll = (course: typeof available[0]) => {
+    setEnrolled(prev => [...prev, { ...course, progress: 0 }]);
+    setAvailable(prev => prev.filter(c => c.id !== course.id));
+    toast.success(`Enrolled in "${course.title}" successfully!`);
+    setTab('enrolled');
+  };
+
+  const handleCourseAction = (progress: number) => {
+    if (progress === 100) {
+      navigate('/dashboard/learner/certificates');
+    } else {
+      navigate('/dashboard/learner/progress');
+    }
+  };
 
   return (
     <LearnerLayout>
@@ -27,14 +47,14 @@ export default function LearnerCourses() {
         {(['enrolled', 'browse'] as const).map(t => (
           <button key={t} onClick={() => setTab(t)}
             className={`px-5 py-2.5 rounded-xl text-sm font-medium capitalize transition-all ${tab === t ? 'bg-primary text-white' : 'bg-muted text-muted-foreground hover:text-foreground'}`}>
-            {t === 'enrolled' ? `Enrolled (${ENROLLED.length})` : 'Browse More'}
+            {t === 'enrolled' ? `Enrolled (${enrolled.length})` : 'Browse More'}
           </button>
         ))}
       </div>
 
       {tab === 'enrolled' ? (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {ENROLLED.map(course => (
+          {enrolled.map(course => (
             <div key={course.id} className="bg-card rounded-2xl border border-border overflow-hidden hover:shadow-craft-lg transition-all hover:-translate-y-1">
               <div className="relative aspect-video">
                 <img src={course.thumbnail} alt={course.title} className="w-full h-full object-cover" />
@@ -56,7 +76,8 @@ export default function LearnerCourses() {
                   <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{course.duration}</span>
                   <span className="flex items-center gap-1"><BookOpen className="w-3 h-3" />{course.lessons} lessons</span>
                 </div>
-                <Button className={`w-full rounded-xl text-xs ${course.progress === 100 ? 'btn-secondary' : 'btn-primary'}`}>
+                <Button className={`w-full rounded-xl text-xs ${course.progress === 100 ? 'btn-secondary' : 'btn-primary'}`}
+                  onClick={() => handleCourseAction(course.progress)}>
                   {course.progress === 100 ? '🎓 Get Certificate' : '▶ Continue'}
                 </Button>
               </div>
@@ -71,7 +92,7 @@ export default function LearnerCourses() {
               className="w-full h-11 pl-10 pr-4 rounded-xl border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 bg-white" />
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {AVAILABLE.filter(c => !search || c.title.toLowerCase().includes(search.toLowerCase())).map(course => (
+            {available.filter(c => !search || c.title.toLowerCase().includes(search.toLowerCase())).map(course => (
               <div key={course.id} className="bg-card rounded-2xl border border-border overflow-hidden hover:shadow-craft-lg transition-all hover:-translate-y-1">
                 <div className="relative aspect-video">
                   <img src={course.thumbnail} alt={course.title} className="w-full h-full object-cover" />
@@ -87,7 +108,7 @@ export default function LearnerCourses() {
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="font-bold text-primary">{course.price === 0 ? 'Free' : `$${course.price}`}</span>
-                    <Button size="sm" className="btn-primary rounded-xl text-xs" onClick={() => toast.success(`Enrolled in "${course.title}"!`)}>Enroll</Button>
+                    <Button size="sm" className="btn-primary rounded-xl text-xs" onClick={() => handleEnroll(course)}>Enroll</Button>
                   </div>
                 </div>
               </div>

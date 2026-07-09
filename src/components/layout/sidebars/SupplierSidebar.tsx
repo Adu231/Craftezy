@@ -7,7 +7,6 @@ const NAV_ITEMS: NavItem[] = [
   { label: 'Materials Catalog', icon: Package, href: ROUTES.SUPPLIER_MATERIALS },
   { label: 'Orders', icon: ShoppingCart, href: ROUTES.SUPPLIER_ORDERS, badge: '5' },
   { label: 'Inventory', icon: Layers, href: ROUTES.SUPPLIER_INVENTORY },
-  { label: 'Dispatch', icon: Truck, href: ROUTES.SUPPLIER_ORDERS + '?tab=dispatch' },
   { label: 'Analytics', icon: BarChart3, href: ROUTES.SUPPLIER_ANALYTICS },
   { label: 'Messages', icon: MessageSquare, href: ROUTES.SUPPLIER_MESSAGES, badge: '3' },
 ];

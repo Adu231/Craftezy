@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import InstructorLayout from '@/layouts/role/InstructorLayout';
-import { DollarSign, TrendingUp, Users, ArrowDownToLine } from 'lucide-react';
+import { DollarSign, TrendingUp, Users, ArrowDownToLine, CreditCard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { AreaChart, Area, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts';
 import { toast } from 'sonner';
@@ -12,6 +13,19 @@ const EARNINGS_DATA = [
 ];
 
 export default function InstructorEarnings() {
+  const [pendingPayout, setPendingPayout] = useState(1820);
+  const [showPayoutModal, setShowPayoutModal] = useState(false);
+
+  const handleConfirmPayout = () => {
+    if (pendingPayout <= 0) {
+      toast.error('No pending balance to request payout');
+      return;
+    }
+    toast.success(`Payout of $${pendingPayout.toLocaleString()} requested! Funds will reach Chase Bank (****4521) in 2-3 business days.`);
+    setPendingPayout(0);
+    setShowPayoutModal(false);
+  };
+
   return (
     <InstructorLayout>
       <div className="flex items-center justify-between mb-6">
@@ -19,7 +33,7 @@ export default function InstructorEarnings() {
           <h1 className="font-display font-bold text-2xl sm:text-3xl">Earnings</h1>
           <p className="text-muted-foreground text-sm mt-1">Teaching revenue breakdown</p>
         </div>
-        <Button className="btn-primary rounded-xl gap-2" onClick={() => toast.info('Payout request coming soon')}>
+        <Button className="btn-primary rounded-xl gap-2" onClick={() => setShowPayoutModal(true)}>
           <ArrowDownToLine className="w-4 h-4" /> Request Payout
         </Button>
       </div>
@@ -29,7 +43,7 @@ export default function InstructorEarnings() {
           { label: 'Total Earned', value: '$14,280', icon: DollarSign, color: 'text-secondary' },
           { label: 'This Month', value: '$3,820', icon: TrendingUp, color: 'text-primary' },
           { label: 'From Courses', value: '$11,480', icon: Users, color: 'text-blue-600' },
-          { label: 'From Workshops', value: '$2,800', icon: DollarSign, color: 'text-accent' },
+          { label: 'From Workshops', value: `$${(2800).toLocaleString()}`, icon: DollarSign, color: 'text-accent' },
         ].map((s, i) => (
           <div key={i} className="bg-card rounded-2xl border border-border p-5">
             <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center mb-3">
@@ -66,10 +80,10 @@ export default function InstructorEarnings() {
 
       <div className="grid lg:grid-cols-2 gap-6">
         <div className="bg-gradient-to-br from-secondary/10 to-accent/10 rounded-2xl border border-secondary/20 p-6">
-          <h3 className="font-semibold mb-1">Pending Payout</h3>
-          <div className="font-display font-bold text-4xl text-secondary mb-1">$1,820</div>
+          <h3 className="font-semibold text-sm mb-1">Pending Payout</h3>
+          <div className="font-display font-bold text-4xl text-secondary mb-1">${pendingPayout.toLocaleString()}</div>
           <p className="text-xs text-muted-foreground mb-4">Available July 15, 2026</p>
-          <Button className="bg-secondary hover:bg-secondary/90 text-white rounded-xl w-full" onClick={() => toast.info('Processing coming soon')}>Request Payout</Button>
+          <Button className="bg-secondary hover:bg-secondary/90 text-white rounded-xl w-full" onClick={() => setShowPayoutModal(true)}>Request Payout</Button>
         </div>
         <div className="bg-card rounded-2xl border border-border p-6">
           <h3 className="font-semibold mb-4">Revenue Split</h3>
@@ -88,6 +102,36 @@ export default function InstructorEarnings() {
           </div>
         </div>
       </div>
+
+      {/* Payout Modal */}
+      {showPayoutModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white rounded-3xl p-6 max-w-md w-full border border-border shadow-craft-lg relative animate-in zoom-in duration-200">
+            <h3 className="font-display font-bold text-xl mb-1 text-foreground">Confirm Payout</h3>
+            <p className="text-xs text-muted-foreground mb-4">Transfer your instructor earnings to Chase bank</p>
+
+            <div className="bg-muted/50 border border-border rounded-2xl p-4 mb-4 text-sm space-y-2">
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Payout Amount:</span>
+                <span className="font-bold text-foreground">${pendingPayout.toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Transfer Method:</span>
+                <span className="font-medium text-foreground">Chase Bank (****4521)</span>
+              </div>
+            </div>
+
+            <div className="mt-6 flex justify-end gap-3 pt-3 border-t border-border">
+              <Button type="button" variant="ghost" onClick={() => setShowPayoutModal(false)} className="rounded-xl">
+                Cancel
+              </Button>
+              <Button onClick={handleConfirmPayout} className="rounded-xl bg-primary text-white hover:bg-primary/90 px-5">
+                Confirm Payout
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </InstructorLayout>
   );
 }

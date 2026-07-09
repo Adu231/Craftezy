@@ -1,17 +1,62 @@
 import LearnerLayout from '@/layouts/role/LearnerLayout';
 import { MOCK_WORKSHOPS } from '@/services/mockData';
-import { Calendar, Clock, MapPin, Monitor, Users, Check } from 'lucide-react';
+import { Calendar, Clock, MapPin, Monitor, Users, Check, CreditCard } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { useState } from 'react';
 
+interface Workshop {
+  id: string;
+  title: string;
+  description: string;
+  date: string;
+  time: string;
+  duration: string;
+  price: number;
+  thumbnail: string;
+  isOnline: boolean;
+  location?: string;
+  maxParticipants: number;
+  enrolledCount: number;
+}
+
 export default function LearnerWorkshops() {
   const [enrolled, setEnrolled] = useState<string[]>(['w2']);
+  
+  // Checkout Modal State
+  const [checkoutWorkshop, setCheckoutWorkshop] = useState<Workshop | null>(null);
+  const [cardNumber, setCardNumber] = useState('');
+  const [cardExpiry, setCardExpiry] = useState('');
+  const [cardCvv, setCardCvv] = useState('');
 
-  const handleEnroll = (id: string) => {
-    setEnrolled(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
-    toast.success(enrolled.includes(id) ? 'Workshop cancelled' : 'Enrolled successfully!');
+  const handleEnrollClick = (workshop: Workshop) => {
+    if (enrolled.includes(workshop.id)) {
+      // Cancel booking
+      setEnrolled(prev => prev.filter(x => x !== workshop.id));
+      toast.success('Workshop booking cancelled successfully');
+    } else {
+      // Open mock card payment details modal
+      setCheckoutWorkshop(workshop);
+      setCardNumber('');
+      setCardExpiry('');
+      setCardCvv('');
+    }
+  };
+
+  const handlePaymentSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!cardNumber || !cardExpiry || !cardCvv) {
+      toast.error('Please enter all payment card details');
+      return;
+    }
+    if (checkoutWorkshop) {
+      setEnrolled(prev => [...prev, checkoutWorkshop.id]);
+      toast.success(`Booking confirmed for "${checkoutWorkshop.title}"! Receipt sent to email.`);
+      setCheckoutWorkshop(null);
+    }
   };
 
   return (
@@ -56,7 +101,7 @@ export default function LearnerWorkshops() {
                 <div className="flex items-center justify-between">
                   <span className="font-bold text-primary text-lg">${workshop.price}</span>
                   <Button className={`rounded-xl h-9 text-sm ${isEnrolled ? 'bg-secondary hover:bg-secondary/90 text-white' : 'btn-primary'}`}
-                    onClick={() => handleEnroll(workshop.id)}>
+                    onClick={() => handleEnrollClick(workshop)}>
                     {isEnrolled ? '✓ Enrolled' : 'Enroll Now'}
                   </Button>
                 </div>
@@ -65,6 +110,79 @@ export default function LearnerWorkshops() {
           );
         })}
       </div>
+
+      {/* Workshop Booking Payment Modal */}
+      {checkoutWorkshop && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm animate-in fade-in duration-200">
+          <form onSubmit={handlePaymentSubmit} className="bg-white rounded-3xl p-6 max-w-md w-full border border-border shadow-craft-lg relative animate-in zoom-in duration-200">
+            <h3 className="font-display font-bold text-xl mb-1 text-foreground">Confirm Booking</h3>
+            <p className="text-xs text-muted-foreground mb-4">Complete payment details to enroll in the live workshop</p>
+
+            <div className="bg-muted/50 border border-border rounded-2xl p-4 mb-4 text-sm space-y-1.5">
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Workshop:</span>
+                <span className="font-semibold text-foreground truncate max-w-[200px]">{checkoutWorkshop.title}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Total price:</span>
+                <span className="font-bold text-primary">${checkoutWorkshop.price}</span>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="card-nr">Card Number *</Label>
+                <div className="relative">
+                  <CreditCard className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Input
+                    id="card-nr"
+                    maxLength={19}
+                    value={cardNumber}
+                    onChange={e => setCardNumber(e.target.value.replace(/\D/g, '').replace(/(.{4})/g, '$1 ').trim())}
+                    className="h-11 pl-10 rounded-xl border-border bg-white"
+                    placeholder="4000 1234 5678 9010"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <Label htmlFor="card-exp">Expiry Date *</Label>
+                  <Input
+                    id="card-exp"
+                    maxLength={5}
+                    value={cardExpiry}
+                    onChange={e => setCardExpiry(e.target.value.replace(/\D/g, '').replace(/(.{2})/g, '$1/').replace(/\/$/, ''))}
+                    className="h-11 rounded-xl border-border bg-white"
+                    placeholder="MM/YY"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="card-cvv">CVV *</Label>
+                  <Input
+                    id="card-cvv"
+                    type="password"
+                    maxLength={3}
+                    value={cardCvv}
+                    onChange={e => setCardCvv(e.target.value.replace(/\D/g, ''))}
+                    className="h-11 rounded-xl border-border bg-white"
+                    placeholder="123"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-6 flex justify-end gap-3 pt-3 border-t border-border">
+              <Button type="button" variant="ghost" onClick={() => setCheckoutWorkshop(null)} className="rounded-xl">
+                Cancel
+              </Button>
+              <Button type="submit" className="rounded-xl bg-primary text-white hover:bg-primary/90 px-5">
+                Pay & Enroll
+              </Button>
+            </div>
+          </form>
+        </div>
+      )}
     </LearnerLayout>
   );
 }

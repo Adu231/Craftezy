@@ -1,11 +1,12 @@
-import { BookOpen, TrendingUp, Award, Calendar, Play, ArrowRight, Clock } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { BookOpen, TrendingUp, Award, Clock, Play, ArrowRight } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import LearnerLayout from '@/layouts/role/LearnerLayout';
 import { useAuth } from '@/contexts/AuthContext';
 import { MOCK_COURSES } from '@/services/mockData';
 import { ROUTES } from '@/constants';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 
 const ENROLLED = MOCK_COURSES.slice(0, 3).map((c, i) => ({
   ...c, progress: [35, 72, 100][i], lastLesson: ['Knot techniques', 'Centering clay', 'Final polish'][i]
@@ -13,6 +14,20 @@ const ENROLLED = MOCK_COURSES.slice(0, 3).map((c, i) => ({
 
 export default function LearnerOverview() {
   const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleCourseAction = (progress: number) => {
+    if (progress === 100) {
+      navigate('/dashboard/learner/certificates');
+    } else {
+      navigate('/dashboard/learner/progress');
+    }
+  };
+
+  const handleEnrollRecommended = (courseTitle: string) => {
+    toast.success(`Enrolled in "${courseTitle}" successfully!`);
+    navigate('/dashboard/learner/courses');
+  };
 
   return (
     <LearnerLayout>
@@ -52,7 +67,8 @@ export default function LearnerOverview() {
             <div key={course.id} className="bg-card rounded-2xl border border-border overflow-hidden hover:shadow-craft-lg transition-all hover:-translate-y-1 duration-300">
               <div className="relative aspect-video overflow-hidden">
                 <img src={course.thumbnail} alt={course.title} className="w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity cursor-pointer"
+                  onClick={() => handleCourseAction(course.progress)}>
                   <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center">
                     <Play className="w-5 h-5 text-primary fill-primary ml-1" />
                   </div>
@@ -75,7 +91,8 @@ export default function LearnerOverview() {
                     <div className="h-full bg-primary rounded-full" style={{ width: `${course.progress}%` }} />
                   </div>
                 </div>
-                <Button size="sm" className={`w-full rounded-xl text-xs ${course.progress === 100 ? 'btn-secondary' : 'btn-primary'}`}>
+                <Button size="sm" className={`w-full rounded-xl text-xs ${course.progress === 100 ? 'btn-secondary' : 'btn-primary'}`}
+                  onClick={() => handleCourseAction(course.progress)}>
                   {course.progress === 100 ? '🎓 Get Certificate' : '▶ Continue'}
                 </Button>
               </div>
@@ -98,7 +115,8 @@ export default function LearnerOverview() {
                 <p className="text-xs font-medium truncate">{c.title}</p>
                 <p className="text-xs text-primary font-bold">{c.price === 0 ? 'Free' : `$${c.price}`}</p>
               </div>
-              <Button size="sm" variant="outline" className="rounded-lg text-xs h-8 shrink-0">Enroll</Button>
+              <Button size="sm" variant="outline" className="rounded-lg text-xs h-8 shrink-0"
+                onClick={() => handleEnrollRecommended(c.title)}>Enroll</Button>
             </div>
           ))}
         </div>
