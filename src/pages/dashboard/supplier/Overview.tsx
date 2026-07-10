@@ -20,7 +20,7 @@ export default function SupplierOverview() {
   return (
     <SupplierLayout>
       <div className="mb-8">
-        <h1 className="font-display font-bold text-2xl sm:text-3xl">Welcome, {user?.name?.split(' ')[0]}! 📦</h1>
+        <h1 className="font-display font-bold text-2xl sm:text-3xl">Welcome, {user?.name?.split(' ')[0]}! </h1>
         <p className="text-muted-foreground text-sm mt-1">Your supply business at a glance</p>
       </div>
 

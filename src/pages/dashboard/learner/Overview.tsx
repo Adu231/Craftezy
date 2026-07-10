@@ -32,7 +32,7 @@ export default function LearnerOverview() {
   return (
     <LearnerLayout>
       <div className="mb-8">
-        <h1 className="font-display font-bold text-2xl sm:text-3xl">Welcome back, {user?.name?.split(' ')[0]}! 📚</h1>
+        <h1 className="font-display font-bold text-2xl sm:text-3xl">Welcome back, {user?.name?.split(' ')[0]}! </h1>
         <p className="text-muted-foreground text-sm mt-1">Continue your creative learning journey</p>
       </div>
 

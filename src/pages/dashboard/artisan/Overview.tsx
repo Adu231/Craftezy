@@ -16,7 +16,7 @@ export default function ArtisanOverview() {
     <ArtisanLayout>
       <div className="mb-8">
         <h1 className="font-display font-bold text-2xl sm:text-3xl">
-          Welcome, {user?.name?.split(' ')[0]}! 🎨
+          Welcome, {user?.name?.split(' ')[0]}! 
         </h1>
         <p className="text-muted-foreground text-sm mt-1">Your store is performing great this month</p>
       </div>
