@@ -4,8 +4,24 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { PRICING_PLANS, ROUTES } from '@/constants';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function PricingSection() {
+  const { isAuthenticated } = useAuth();
+
+  const getDestination = (plan: typeof PRICING_PLANS[0]) => {
+    if (!isAuthenticated) return ROUTES.REGISTER;
+    if (plan.price === 0) return ROUTES.DASHBOARD;
+    return '/checkout';
+  };
+
+  const getLinkState = (plan: typeof PRICING_PLANS[0]) => {
+    if (isAuthenticated && plan.price > 0) {
+      return { type: 'subscription', planName: plan.name, price: plan.price };
+    }
+    return undefined;
+  };
+
   return (
     <section id="pricing" className="py-24 bg-white">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -65,7 +81,7 @@ export default function PricingSection() {
                 ))}
               </ul>
 
-              <Link to={ROUTES.REGISTER}>
+              <Link to={getDestination(plan)} state={getLinkState(plan)}>
                 <Button
                   className={cn(
                     'w-full rounded-xl h-11 font-semibold',

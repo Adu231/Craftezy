@@ -12,7 +12,10 @@ import { Workshop } from '@/types';
 
 export default function Checkout() {
   const location = useLocation();
-  const checkoutState = location.state as { type: 'workshop'; item: Workshop } | null;
+  const checkoutState = location.state as 
+    | { type: 'workshop'; item: Workshop } 
+    | { type: 'subscription'; planName: string; price: number } 
+    | null;
 
   const { items: cartItems, totalPrice: cartTotalPrice, clearCart } = useCart();
 
@@ -27,10 +30,23 @@ export default function Checkout() {
         }, 
         quantity: 1 
       }] 
+    : checkoutState?.type === 'subscription'
+    ? [{
+        product: {
+          id: 'sub',
+          title: `${checkoutState.planName} Plan Subscription`,
+          price: checkoutState.price,
+          images: ['https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=200&h=200&fit=crop'],
+          artisan: { name: 'Craftezy Platform' }
+        },
+        quantity: 1
+      }]
     : cartItems;
 
   const totalPrice = checkoutState?.type === 'workshop' 
     ? checkoutState.item.price 
+    : checkoutState?.type === 'subscription'
+    ? checkoutState.price
     : cartTotalPrice;
 
   const { user } = useAuth();
@@ -50,7 +66,9 @@ export default function Checkout() {
   const handlePayment = (e: React.FormEvent) => {
     e.preventDefault();
     const isWorkshop = checkoutState?.type === 'workshop';
-    if (isWorkshop) {
+    const isSubscription = checkoutState?.type === 'subscription';
+
+    if (isWorkshop || isSubscription) {
       if (!cardName || !cardNumber || !cardExpiry || !cardCvc) {
         toast.error('Please complete all card payment fields');
         return;
@@ -67,7 +85,11 @@ export default function Checkout() {
       setIsProcessing(false);
       setIsSuccess(true);
       clearCart();
-      toast.success('Payment completed successfully!');
+      if (isSubscription) {
+        toast.success(`Welcome to the ${checkoutState.planName} Plan trial!`);
+      } else {
+        toast.success('Payment completed successfully!');
+      }
     }, 2500);
   };
 
@@ -81,12 +103,24 @@ export default function Checkout() {
             </div>
             <h1 className="font-display font-bold text-3xl text-foreground mb-3">Order Confirmed!</h1>
             <p className="text-muted-foreground text-sm mb-8 leading-relaxed">
-              Thank you for supporting independent artisans. Your payment was processed successfully. You will receive an email confirmation shortly.
+              {checkoutState?.type === 'subscription' 
+                ? `You have successfully started your 14-day free trial of the ${checkoutState.planName} Plan.`
+                : 'Thank you for supporting independent artisans. Your payment was processed successfully. You will receive an email confirmation shortly.'}
             </p>
             <div className="space-y-3">
-              <Link to={checkoutState?.type === 'workshop' ? '/dashboard/learner/workshops' : '/dashboard/customer/orders'}>
+              <Link to={
+                checkoutState?.type === 'workshop' 
+                  ? '/dashboard/learner/workshops' 
+                  : checkoutState?.type === 'subscription'
+                  ? '/dashboard'
+                  : '/dashboard/customer/orders'
+              }>
                 <Button className="w-full bg-primary hover:bg-primary/90 text-white rounded-xl h-12 font-semibold">
-                  {checkoutState?.type === 'workshop' ? 'View My Workshops' : 'Track My Orders'}
+                  {checkoutState?.type === 'workshop' 
+                    ? 'View My Workshops' 
+                    : checkoutState?.type === 'subscription'
+                    ? 'Go to Dashboard'
+                    : 'Track My Orders'}
                 </Button>
               </Link>
               <Link to="/marketplace">
@@ -106,9 +140,21 @@ export default function Checkout() {
       <div className="min-h-screen bg-gradient-to-b from-cream to-white py-12">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-8">
-            <Link to={checkoutState?.type === 'workshop' ? `/workshops/${checkoutState.item.id}` : "/cart"} className="inline-flex items-center gap-2 text-primary font-semibold hover:underline mb-4">
+            <Link to={
+              checkoutState?.type === 'workshop' 
+                ? `/workshops/${checkoutState.item.id}` 
+                : checkoutState?.type === 'subscription'
+                ? '/'
+                : "/cart"
+            } className="inline-flex items-center gap-2 text-primary font-semibold hover:underline mb-4">
               <ArrowLeft className="w-4 h-4" />
-              Back to {checkoutState?.type === 'workshop' ? 'Workshop Details' : 'Cart'}
+              Back to {
+                checkoutState?.type === 'workshop' 
+                  ? 'Workshop Details' 
+                  : checkoutState?.type === 'subscription'
+                  ? 'Home'
+                  : 'Cart'
+              }
             </Link>
             <h1 className="font-display font-bold text-3xl sm:text-4xl text-foreground">Secure Checkout</h1>
             <p className="text-muted-foreground text-sm mt-1">Complete your order with encrypted card payment</p>
@@ -118,7 +164,7 @@ export default function Checkout() {
             {/* Left columns: forms */}
             <div className="lg:col-span-2 space-y-6">
               {/* Shipping Address */}
-              {checkoutState?.type !== 'workshop' && (
+              {checkoutState?.type !== 'workshop' && checkoutState?.type !== 'subscription' && (
                 <div className="bg-white rounded-3xl border border-border p-6 shadow-craft-sm space-y-4">
                   <h3 className="font-semibold text-lg text-foreground pb-2 border-b border-border">Shipping Address</h3>
                   <div className="space-y-3">
