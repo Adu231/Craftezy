@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Send, Search } from 'lucide-react';
+import { Send, Search, MessageSquare } from 'lucide-react';
 import SupplierLayout from '@/layouts/role/SupplierLayout';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -178,7 +178,7 @@ export default function SupplierMessages() {
             </div>
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center p-8 text-center bg-muted/5">
-              <span className="text-4xl mb-2">💬</span>
+              <MessageSquare className="w-10 h-10 text-muted-foreground mb-2" />
               <p className="text-sm font-semibold">Select a conversation</p>
               <p className="text-xs text-muted-foreground">Select an artisan thread from the left menu to start chatting</p>
             </div>

@@ -63,7 +63,7 @@ export default function Login() {
 
         {/* Demo Accounts - Quick Access */}
         <div className="mb-6">
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">🚀 Quick Demo Login — Click any role below</p>
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3"> Quick Demo Login — Click any role below</p>
           <div className="grid grid-cols-2 gap-2">
             {DEMO_ACCOUNTS_INFO.map(account => (
               <button

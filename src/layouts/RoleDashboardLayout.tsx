@@ -1,6 +1,6 @@
 import { ReactNode, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
-import { Menu, Bell, Search, LogOut } from 'lucide-react';
+import { Menu, Bell, Search, LogOut, Package, MessageSquare } from 'lucide-react';
 import { useAuth, getDashboardRoute } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -84,14 +84,14 @@ export default function RoleDashboardLayout({ children, sidebar }: Props) {
                   <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">2 New</span>
                 </div>
                 <DropdownMenuItem className="p-3 cursor-pointer rounded-xl flex items-start gap-2.5 hover:bg-muted">
-                  <span className="text-xl">📦</span>
+                  <Package className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                   <div>
                     <p className="text-xs font-semibold text-foreground">Order #ORD-9842 has been shipped!</p>
                     <p className="text-[10px] text-muted-foreground mt-0.5">Estimated delivery: 2 days</p>
                   </div>
                 </DropdownMenuItem>
                 <DropdownMenuItem className="p-3 cursor-pointer rounded-xl flex items-start gap-2.5 hover:bg-muted">
-                  <span className="text-xl">💬</span>
+                  <MessageSquare className="w-5 h-5 text-secondary shrink-0 mt-0.5" />
                   <div>
                     <p className="text-xs font-semibold text-foreground">New message from Artisan Elena</p>
                     <p className="text-[10px] text-muted-foreground mt-0.5">"Your custom order specifications are ready..."</p>

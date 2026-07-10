@@ -1,5 +1,12 @@
 import { WORKFLOW_STEPS } from '@/constants';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Store, Sparkles, Globe, TrendingUp } from 'lucide-react';
+
+const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
+  '01': Store,
+  '02': Sparkles,
+  '03': Globe,
+  '04': TrendingUp,
+};
 
 export default function WorkflowSection() {
   return (
@@ -23,8 +30,11 @@ export default function WorkflowSection() {
           {WORKFLOW_STEPS.map((step, i) => (
             <div key={i} className="relative group">
               <div className="bg-white/5 hover:bg-white/8 border border-white/10 hover:border-white/20 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 text-center">
-                <div className="w-16 h-16 bg-gradient-to-br from-primary/30 to-primary/10 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                  {step.icon}
+                <div className="w-16 h-16 bg-gradient-to-br from-primary/30 to-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                  {(() => {
+                    const IconComp = ICON_MAP[step.step];
+                    return IconComp ? <IconComp className="w-8 h-8 text-primary" /> : null;
+                  })()}
                 </div>
                 <div className="text-[hsl(16,60%,65%)] text-xs font-bold mb-2 uppercase tracking-widest">{step.step}</div>
                 <h3 className="font-semibold text-base mb-3">{step.title}</h3>

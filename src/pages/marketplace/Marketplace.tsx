@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Search, SlidersHorizontal, ArrowLeft, Star, ShoppingBag, Zap, Heart, Shield, Check } from 'lucide-react';
 import { MOCK_PRODUCTS } from '@/services/mockData';
 import MainLayout from '@/layouts/MainLayout';
@@ -18,9 +18,19 @@ export default function Marketplace() {
   const { toggle, isInWishlist } = useWishlist();
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [search, setSearch] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('All');
+  const selectedCategory = searchParams.get('category') || 'All';
+  const setSelectedCategory = (val: string) => {
+    const nextParams = new URLSearchParams(searchParams);
+    if (val === 'All') {
+      nextParams.delete('category');
+    } else {
+      nextParams.set('category', val);
+    }
+    setSearchParams(nextParams);
+  };
   const [selectedTag, setSelectedTag] = useState<string>('All');
 
   const categories = ['All', ...Array.from(new Set(MOCK_PRODUCTS.map(p => p.category)))];

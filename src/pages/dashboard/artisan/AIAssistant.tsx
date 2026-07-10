@@ -16,7 +16,7 @@ const SAMPLE_RESPONSES: Record<string, string> = {
 
 Each mug in this set of four is a unique piece of functional art, lovingly thrown on the wheel and finished with our signature warm terracotta glaze. 
 
-✨ **What makes these special:**
+**What makes these special:**
 - Hand-thrown on the pottery wheel — no two are identical
 - Food-safe terracotta glaze with rich, earthy tones
 - Comfortable handle designed for a natural grip
@@ -27,19 +27,19 @@ Perfect for cozy morning rituals, afternoon tea, or as a thoughtful gift for the
 
   'Color Palette Ideas': `Here are 5 stunning color palettes for your boho macramé wall hanging:
 
-**1. Desert Sunset** 🌅
+**1. Desert Sunset**
 Terracotta · Burnt Sienna · Warm Sand · Ivory · Deep Rust
 
-**2. Sage Garden** 🌿  
+**2. Sage Garden**  
 Sage Green · Dusty Olive · Cream · Warm White · Moss
 
-**3. Ocean Drift** 🌊
+**3. Ocean Drift**
 Navy Blue · Driftwood Gray · Pale Blue · Ivory · Rope Natural
 
-**4. Golden Hour** ✨
+**4. Golden Hour**
 Mustard Yellow · Ochre · Warm Tan · Off-White · Rust
 
-**5. Midnight Blooms** 🌸
+**5. Midnight Blooms**
 Deep Plum · Dusty Rose · Blush · Warm Gray · Cream`,
 
   'Price My Product': `Based on your inputs, here's my pricing recommendation:

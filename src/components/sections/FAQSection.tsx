@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, MessageCircle } from 'lucide-react';
 import { FAQ_ITEMS } from '@/constants';
 import { cn } from '@/lib/utils';
 
@@ -20,8 +20,8 @@ export default function FAQSection() {
               Everything you need to know about selling, buying, and learning on Craftezy.
             </p>
             <div className="bg-gradient-to-br from-primary/10 to-accent/10 border border-primary/20 rounded-2xl p-6">
-              <div className="text-2xl mb-3">💬</div>
-              <h4 className="font-semibold mb-2">Still have questions?</h4>
+              <MessageCircle className="w-8 h-8 text-primary mb-3" />
+              <h4 className="font-semibold mb-2 text-foreground">Still have questions?</h4>
               <p className="text-sm text-muted-foreground mb-4">Our creator support team is available 7 days a week to help you succeed.</p>
               <button className="text-sm font-semibold text-primary hover:underline">Contact Support →</button>
             </div>

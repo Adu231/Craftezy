@@ -1,4 +1,4 @@
-import { CheckCircle2, ArrowRight } from 'lucide-react';
+import { CheckCircle2, ArrowRight, Paintbrush, Gift } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ROUTES } from '@/constants';
@@ -6,26 +6,22 @@ import workshopImg from '@/assets/artisan-workshop.jpg';
 import productsImg from '@/assets/products-display.jpg';
 
 const ARTISAN_BENEFITS = [
-  'AI-powered product descriptions & pricing',
-  'Custom order management system',
-  'Built-in workshop & course platform',
-  'Real-time sales analytics & insights',
-  'Global shipping & logistics support',
-  'Creator community & collaboration tools',
+  '0% transaction fees on your first 10 sales',
+  'AI-powered description & catalog management builder',
+  'Live interactive workshops setup in 2 minutes',
+  'Automated shipping labels & global delivery integrations',
 ];
 
 const BUYER_BENEFITS = [
-  'Discover unique handmade products',
-  'Personalized AI recommendations',
-  'Secure buyer protection guarantee',
-  'Custom order requests from artisans',
-  'Learn skills directly from makers',
-  'Support independent creators globally',
+  'Buy verified products directly from local makers',
+  'One-click secure milestones custom commissioning',
+  'Learn craft skills directly from leading instructors',
+  'Direct communication channel with all global artisans',
 ];
 
 export default function BenefitsSection() {
   return (
-    <section className="py-24 bg-muted/40">
+    <section className="py-24 bg-muted/30">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <p className="text-sm font-semibold text-primary mb-3 uppercase tracking-wider">Why Craftezy</p>
@@ -38,7 +34,7 @@ export default function BenefitsSection() {
         <div className="grid lg:grid-cols-2 gap-12 items-center mb-20">
           <div>
             <div className="inline-flex items-center gap-2 bg-primary/10 rounded-full px-4 py-1.5 mb-4">
-              <span className="text-xl">🎨</span>
+              <Paintbrush className="w-4 h-4 text-primary" />
               <span className="text-xs font-semibold text-primary">For Artisans & Makers</span>
             </div>
             <h3 className="font-display font-bold text-2xl sm:text-3xl mb-4 text-foreground">
@@ -87,7 +83,7 @@ export default function BenefitsSection() {
           </div>
           <div className="order-1 lg:order-2">
             <div className="inline-flex items-center gap-2 bg-secondary/10 rounded-full px-4 py-1.5 mb-4">
-              <span className="text-xl">💝</span>
+              <Gift className="w-4 h-4 text-secondary" />
               <span className="text-xs font-semibold text-secondary">For Buyers & Learners</span>
             </div>
             <h3 className="font-display font-bold text-2xl sm:text-3xl mb-4 text-foreground">
@@ -99,17 +95,11 @@ export default function BenefitsSection() {
             <ul className="space-y-3 mb-8">
               {BUYER_BENEFITS.map((benefit, i) => (
                 <li key={i} className="flex items-center gap-3 text-sm">
-                  <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />
+                  <CheckCircle2 className="w-5 h-5 text-secondary shrink-0" />
                   <span>{benefit}</span>
                 </li>
               ))}
             </ul>
-            <Link to={ROUTES.MARKETPLACE}>
-              <Button variant="outline" className="rounded-xl h-11 px-6 border-secondary text-secondary hover:bg-secondary hover:text-white group">
-                Explore Marketplace
-                <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-              </Button>
-            </Link>
           </div>
         </div>
       </div>

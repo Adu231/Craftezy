@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Heart, MessageCircle, Share2, UserPlus, TrendingUp } from 'lucide-react';
+import { Heart, MessageCircle, Share2, UserPlus, TrendingUp, MessageSquare, Eye, Radio } from 'lucide-react';
 import DashboardLayout from '@/layouts/DashboardLayout';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -52,18 +52,19 @@ export default function CommunityDashboard() {
         </div>
       </div>
 
-      {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
         {[
-          { label: 'Total Likes', value: '990', icon: '❤️' },
-          { label: 'Comments', value: '136', icon: '💬' },
-          { label: 'Profile Views', value: '4.2K', icon: '👁️' },
-          { label: 'Reach', value: '12K', icon: '📡' },
+          { label: 'Total Likes', value: '990', icon: Heart, color: 'text-red-500' },
+          { label: 'Comments', value: '136', icon: MessageSquare, color: 'text-secondary' },
+          { label: 'Profile Views', value: '4.2K', icon: Eye, color: 'text-blue-500' },
+          { label: 'Reach', value: '12K', icon: Radio, color: 'text-green-500' },
         ].map((s, i) => (
-          <div key={i} className="bg-card rounded-2xl border border-border p-4 text-center">
-            <div className="text-2xl mb-1">{s.icon}</div>
+          <div key={i} className="bg-card rounded-2xl border border-border p-4 text-center flex flex-col items-center justify-center">
+            <div className="w-9 h-9 rounded-xl bg-muted flex items-center justify-center mb-1.5">
+              <s.icon className={`w-4 h-4 ${s.color}`} />
+            </div>
             <div className="font-display font-bold text-xl">{s.value}</div>
-            <div className="text-xs text-muted-foreground">{s.label}</div>
+            <div className="text-[10px] text-muted-foreground mt-0.5">{s.label}</div>
           </div>
         ))}
       </div>

@@ -105,14 +105,14 @@ export const ROUTES = {
 } as const;
 
 export const PRODUCT_CATEGORIES = [
-  { id: '1', name: 'Jewelry & Accessories', slug: 'jewelry', icon: '💍', color: '#C65D3B', productCount: 2840 },
-  { id: '2', name: 'Home Décor', slug: 'home-decor', icon: '🏺', color: '#2E7D32', productCount: 3210 },
-  { id: '3', name: 'Pottery & Ceramics', slug: 'pottery', icon: '🪴', color: '#E9A825', productCount: 1560 },
-  { id: '4', name: 'Textile & Fiber Arts', slug: 'textile', icon: '🧶', color: '#C65D3B', productCount: 2100 },
-  { id: '5', name: 'Painting & Prints', slug: 'painting', icon: '🎨', color: '#2E7D32', productCount: 1890 },
-  { id: '6', name: 'Woodworking', slug: 'woodworking', icon: '🪵', color: '#E9A825', productCount: 980 },
-  { id: '7', name: 'Candles & Soaps', slug: 'candles', icon: '🕯️', color: '#C65D3B', productCount: 1420 },
-  { id: '8', name: 'Paper Crafts', slug: 'paper', icon: '📜', color: '#2E7D32', productCount: 760 },
+  { id: '1', name: 'Jewelry & Accessories', slug: 'jewelry', icon: '', color: '#C65D3B', productCount: 2840 },
+  { id: '2', name: 'Home Décor', slug: 'home-decor', icon: '', color: '#2E7D32', productCount: 3210 },
+  { id: '3', name: 'Pottery & Ceramics', slug: 'pottery', icon: '', color: '#E9A825', productCount: 1560 },
+  { id: '4', name: 'Textile & Fiber Arts', slug: 'textile', icon: '', color: '#C65D3B', productCount: 2100 },
+  { id: '5', name: 'Painting & Prints', slug: 'painting', icon: '', color: '#2E7D32', productCount: 1890 },
+  { id: '6', name: 'Woodworking', slug: 'woodworking', icon: '', color: '#E9A825', productCount: 980 },
+  { id: '7', name: 'Candles & Soaps', slug: 'candles', icon: '', color: '#C65D3B', productCount: 1420 },
+  { id: '8', name: 'Paper Crafts', slug: 'paper', icon: '', color: '#2E7D32', productCount: 760 },
 ];
 
 export const COURSE_CATEGORIES = [
@@ -269,25 +269,25 @@ export const WORKFLOW_STEPS = [
     step: '01',
     title: 'Create Your Store',
     description: 'Set up a beautiful artisan storefront with our drag-and-drop builder. Add your story, photos, and brand.',
-    icon: '🏪',
+    icon: '',
   },
   {
     step: '02',
     title: 'List Your Crafts',
     description: 'Upload products with AI-powered descriptions, smart pricing suggestions, and automatic categorization.',
-    icon: '✨',
+    icon: '',
   },
   {
     step: '03',
     title: 'Reach Customers',
     description: 'Get discovered by thousands of craft enthusiasts through our AI-powered recommendation engine.',
-    icon: '🌍',
+    icon: '',
   },
   {
     step: '04',
     title: 'Grow & Earn',
     description: 'Track sales, analyze performance, teach workshops, and scale your creative business confidently.',
-    icon: '📈',
+    icon: '',
   },
 ];
 
@@ -338,7 +338,6 @@ export const DEMO_ACCOUNTS_INFO = [
     description: 'Browse products, track orders, write reviews',
     color: 'bg-blue-50 border-blue-200',
     badgeColor: 'bg-blue-100 text-blue-800',
-    icon: '🛍️',
   },
   {
     role: 'artisan' as const,
@@ -348,7 +347,7 @@ export const DEMO_ACCOUNTS_INFO = [
     description: 'Manage store, products, orders & earnings',
     color: 'bg-orange-50 border-orange-200',
     badgeColor: 'bg-orange-100 text-orange-800',
-    icon: '🎨',
+    
   },
   {
     role: 'learner' as const,
@@ -358,7 +357,7 @@ export const DEMO_ACCOUNTS_INFO = [
     description: 'Enrolled courses, progress & certificates',
     color: 'bg-purple-50 border-purple-200',
     badgeColor: 'bg-purple-100 text-purple-800',
-    icon: '📚',
+    
   },
   {
     role: 'instructor' as const,
@@ -368,7 +367,7 @@ export const DEMO_ACCOUNTS_INFO = [
     description: 'Host workshops, teach courses, issue certificates',
     color: 'bg-green-50 border-green-200',
     badgeColor: 'bg-green-100 text-green-800',
-    icon: '👩‍🏫',
+
   },
   {
     role: 'supplier' as const,
@@ -378,7 +377,7 @@ export const DEMO_ACCOUNTS_INFO = [
     description: 'List materials, manage inventory & orders',
     color: 'bg-yellow-50 border-yellow-200',
     badgeColor: 'bg-yellow-100 text-yellow-800',
-    icon: '📦',
+   
   },
   {
     role: 'brand' as const,
@@ -388,7 +387,7 @@ export const DEMO_ACCOUNTS_INFO = [
     description: 'Launch campaigns, collaborate with creators',
     color: 'bg-pink-50 border-pink-200',
     badgeColor: 'bg-pink-100 text-pink-800',
-    icon: '💼',
+    
   },
   {
     role: 'admin' as const,
@@ -398,6 +397,6 @@ export const DEMO_ACCOUNTS_INFO = [
     description: 'Full platform management & analytics',
     color: 'bg-red-50 border-red-200',
     badgeColor: 'bg-red-100 text-red-800',
-    icon: '⚙️',
+   
   },
 ];

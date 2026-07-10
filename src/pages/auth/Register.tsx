@@ -55,12 +55,12 @@ export default function Register() {
   };
 
   const roleOptions: { value: UserRole; label: string; description: string; icon: string }[] = [
-    { value: 'customer', label: 'Buyer', description: 'Shop handmade goods', icon: '🛍️' },
-    { value: 'artisan', label: 'Artisan', description: 'Sell handmade crafts', icon: '🎨' },
-    { value: 'learner', label: 'Learner', description: 'Learn craft skills', icon: '📚' },
-    { value: 'instructor', label: 'Instructor', description: 'Teach workshops', icon: '👩‍🏫' },
-    { value: 'supplier', label: 'Supplier', description: 'Sell craft supplies', icon: '🧶' },
-    { value: 'brand', label: 'Brand', description: 'Partner with creators', icon: '🤝' },
+    { value: 'customer', label: 'Buyer', description: 'Shop handmade goods', icon: '' },
+    { value: 'artisan', label: 'Artisan', description: 'Sell handmade crafts', icon: '' },
+    { value: 'learner', label: 'Learner', description: 'Learn craft skills', icon: '' },
+    { value: 'instructor', label: 'Instructor', description: 'Teach workshops', icon: '' },
+    { value: 'supplier', label: 'Supplier', description: 'Sell craft supplies', icon: '' },
+    { value: 'brand', label: 'Brand', description: 'Partner with creators', icon: '' },
   ];
 
   return (

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight, Play, Star, Sparkles, TrendingUp } from 'lucide-react';
+import { ArrowRight, Play, Star, Sparkles, TrendingUp, Paintbrush, Package, Heart, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ROUTES } from '@/constants';
 import heroImg from '@/assets/hero-crafts.jpg';
@@ -116,13 +116,15 @@ export default function HeroSection() {
         {/* Stats Strip */}
         <div className="mt-16 grid grid-cols-2 sm:grid-cols-4 gap-6">
           {[
-            { label: 'Active Artisans', value: '50,000+', icon: '🎨' },
-            { label: 'Products Listed', value: '2M+', icon: '🏺' },
-            { label: 'Happy Customers', value: '500K+', icon: '💝' },
-            { label: 'Countries', value: '85+', icon: '🌍' },
+            { label: 'Active Artisans', value: '50,000+', icon: Paintbrush, color: 'text-primary' },
+            { label: 'Products Listed', value: '2M+', icon: Package, color: 'text-secondary' },
+            { label: 'Happy Customers', value: '500K+', icon: Heart, color: 'text-accent' },
+            { label: 'Countries', value: '85+', icon: Globe, color: 'text-blue-600' },
           ].map(stat => (
-            <div key={stat.label} className="text-center glass rounded-2xl p-5">
-              <div className="text-2xl mb-1">{stat.icon}</div>
+            <div key={stat.label} className="text-center glass rounded-2xl p-5 flex flex-col items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-white/40 flex items-center justify-center mb-2">
+                <stat.icon className={`w-5 h-5 ${stat.color}`} />
+              </div>
               <div className="font-display font-bold text-2xl sm:text-3xl text-foreground">{stat.value}</div>
               <div className="text-sm text-muted-foreground mt-0.5">{stat.label}</div>
             </div>

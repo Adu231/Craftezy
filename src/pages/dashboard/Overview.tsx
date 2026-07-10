@@ -25,7 +25,7 @@ export default function Overview() {
       {/* Greeting */}
       <div className="mb-8">
         <h1 className="font-display font-bold text-2xl sm:text-3xl text-foreground">
-          Good morning, {user?.name?.split(' ')[0]}! 👋
+          Good morning, {user?.name?.split(' ')[0]}! 
         </h1>
         <p className="text-muted-foreground mt-1">Here's what's happening with your store today.</p>
       </div>

@@ -42,21 +42,21 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'p3', title: 'Silver & Moonstone Ring - Handmade', description: 'Delicate sterling silver ring featuring a genuine rainbow moonstone. Set in a simple bezel setting that lets the stone be the star. Available in sizes 5-10.',
     price: 72, originalPrice: 90, images: [
-      'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=600&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=600&h=600&fit=crop',
     ],
     category: 'Jewelry & Accessories', tags: ['ring', 'silver', 'moonstone', 'handmade'], artisan: ARTISANS[2], rating: 4.7, reviewCount: 56, stock: 12, isCustomOrderAvailable: true, isBestseller: true, createdAt: '2024-01-28', shippingDays: 4, materials: ['Sterling silver', 'Rainbow moonstone'],
   },
   {
     id: 'p4', title: 'Reclaimed Wood Floating Shelf Set', description: 'Set of 3 rustic floating shelves crafted from reclaimed wood. Each shelf has unique grain patterns and character marks from its previous life. Hardware included.',
     price: 145, images: [
-      'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=600&h=600&fit=crop',
     ],
     category: 'Woodworking', tags: ['shelf', 'wood', 'rustic', 'home-decor'], artisan: ARTISANS[1], rating: 4.9, reviewCount: 201, stock: 6, isCustomOrderAvailable: true, isFeatured: true, createdAt: '2023-12-05', shippingDays: 10, materials: ['Reclaimed pine', 'Steel brackets'],
   },
   {
     id: 'p5', title: 'Beeswax & Lavender Pillar Candle', description: 'Hand-poured 100% pure beeswax candle infused with real dried lavender. Burns clean for 40+ hours. The natural honey scent of beeswax blends beautifully with fresh lavender.',
     price: 38, images: [
-      'https://images.unsplash.com/photo-1603006905003-be475563bc59?w=600&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?w=600&h=600&fit=crop',
     ],
     category: 'Candles & Soaps', tags: ['candle', 'beeswax', 'lavender', 'natural'], artisan: ARTISANS[0], rating: 4.8, reviewCount: 147, stock: 25, isCustomOrderAvailable: false, isBestseller: true, createdAt: '2024-03-01', shippingDays: 3, materials: ['Pure beeswax', 'Dried lavender', 'Cotton wick'],
   },
@@ -70,9 +70,9 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'p7', title: 'Handwoven Wool Throw Blanket', description: 'Luxuriously soft throw blanket handwoven from 100% merino wool in a classic herringbone pattern. 50"x60". Available in five colorways. Machine washable on gentle cycle.',
     price: 185, originalPrice: 210, images: [
-      'https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=600&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1580301762395-21ce84d00bc6?w=600&h=600&fit=crop',
     ],
-    category: 'Textile & Fiber Arts', tags: ['blanket', 'wool', 'woven', 'cozy'], artisan: ARTISANS[0], rating: 4.8, reviewCount: 92, stock: 9, isCustomOrderAvailable: true, createdAt: '2024-01-10', shippingDays: 6, materials: ['Merino wool'],
+    category: 'Textile & Fiber Arts', tags: ['blanket', 'wool', 'woven', 'cozy'], artisan: ARTISANS[0], rating: 4.8, reviewCount: 92, stock: 9, isCustomOrderAvailable: true, isFeatured: true, createdAt: '2024-01-10', shippingDays: 6, materials: ['Merino wool'],
   },
   {
     id: 'p8', title: 'Raku-Fired Ceramic Vase', description: 'One-of-a-kind raku pottery vase with unpredictable crackle patterns created during the fire-cooling process. No two are alike. 10" tall.',
@@ -93,11 +93,11 @@ export const MOCK_COURSES: Course[] = [
     instructor: ARTISANS[3], price: 89, duration: '12 hours', lessons: 36, level: 'beginner', category: 'Pottery', rating: 4.8, studentsCount: 1560, isFeatured: true, tags: ['pottery', 'wheel', 'ceramics'], skills: ['Centering', 'Opening', 'Pulling walls', 'Trimming'], createdAt: '2023-11-20',
   },
   {
-    id: 'c3', title: 'Silversmithing: Create Your First Jewelry Collection', description: 'From raw silver sheet to polished jewelry. Learn sawing, soldering, setting stones and finishing.', thumbnail: 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=600&h=400&fit=crop',
+    id: 'c3', title: 'Silversmithing: Create Your First Jewelry Collection', description: 'From raw silver sheet to polished jewelry. Learn sawing, soldering, setting stones and finishing.', thumbnail: 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=600&h=400&fit=crop',
     instructor: ARTISANS[2], price: 129, originalPrice: 160, duration: '18 hours', lessons: 52, level: 'intermediate', category: 'Jewelry Making', rating: 4.7, studentsCount: 890, isFeatured: true, tags: ['silver', 'jewelry', 'metalwork'], skills: ['Sawing', 'Soldering', 'Stone setting', 'Polishing'], createdAt: '2024-02-01',
   },
   {
-    id: 'c4', title: 'Woodburning Art: From Beginner to Advanced', description: 'Pyrography techniques for creating stunning art and functional items with a woodburning tool.', thumbnail: 'https://images.unsplash.com/photo-1544027993-37dbfe43562a?w=600&h=400&fit=crop',
+    id: 'c4', title: 'Woodburning Art: From Beginner to Advanced', description: 'Pyrography techniques for creating stunning art and functional items with a woodburning tool.', thumbnail: 'https://images.unsplash.com/photo-1538688525198-9b88f6f53126?w=600&h=400&fit=crop',
     instructor: ARTISANS[1], price: 59, duration: '8 hours', lessons: 28, level: 'beginner', category: 'Woodworking', rating: 4.8, studentsCount: 1230, tags: ['woodburn', 'pyrography', 'art'], skills: ['Line work', 'Shading', 'Color', 'Patterns'], createdAt: '2024-01-25',
   },
   {
@@ -120,7 +120,7 @@ export const MOCK_WORKSHOPS: Workshop[] = [
     instructor: ARTISANS[0], price: 35, date: '2026-07-18', time: '3:00 PM', duration: '2 hours', maxParticipants: 30, enrolledCount: 24, isOnline: true, category: 'Macramé', tags: ['macrame', 'online', 'live'],
   },
   {
-    id: 'w3', title: 'Introduction to Silversmithing', description: 'Learn the basics of working with silver: sawing, filing, soldering and create a pendant.', thumbnail: 'https://images.unsplash.com/photo-1603006905003-be475563bc59?w=600&h=400&fit=crop',
+    id: 'w3', title: 'Introduction to Silversmithing', description: 'Learn the basics of working with silver: sawing, filing, soldering and create a pendant.', thumbnail: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=600&h=400&fit=crop',
     instructor: ARTISANS[2], price: 145, date: '2026-07-25', time: '11:00 AM', duration: '4 hours', maxParticipants: 8, enrolledCount: 5, isOnline: false, location: 'Brooklyn Jewelry Studio, NY', category: 'Jewelry', tags: ['silver', 'jewelry', 'in-person'],
   },
   {

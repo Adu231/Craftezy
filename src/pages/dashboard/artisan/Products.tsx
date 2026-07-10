@@ -211,6 +211,7 @@ export default function ArtisanProducts() {
                   <div className="flex flex-wrap gap-1">
                     {p.isBestseller && <Badge className="bg-primary/10 text-primary text-[10px] rounded-md">Bestseller</Badge>}
                     {p.isFeatured && <Badge className="bg-secondary/10 text-secondary text-[10px] rounded-md">Featured</Badge>}
+                    {!p.isBestseller && !p.isFeatured && <Badge className="bg-green-100 text-green-800 text-[10px] rounded-md">Active</Badge>}
                   </div>
                 </td>
                 <td className="px-3 py-4">

@@ -16,7 +16,7 @@ export default function CustomerOverview() {
       {/* Header */}
       <div className="mb-8">
         <h1 className="font-display font-bold text-2xl sm:text-3xl">
-          Welcome back, {user?.name?.split(' ')[0]}! 👋
+          Welcome back, {user?.name?.split(' ')[0]}! 
         </h1>
         <p className="text-muted-foreground text-sm mt-1">Here's your shopping activity at a glance</p>
       </div>
