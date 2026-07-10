@@ -1,5 +1,5 @@
 import { WORKFLOW_STEPS } from '@/constants';
-import { ArrowRight, Store, Sparkles, Globe, TrendingUp } from 'lucide-react';
+import { Store, Sparkles, Globe, TrendingUp } from 'lucide-react';
 
 const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   '01': Store,
@@ -24,9 +24,6 @@ export default function WorkflowSection() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 relative">
-          {/* Connection Line */}
-          <div className="absolute top-12 left-[12.5%] right-[12.5%] h-px bg-gradient-to-r from-transparent via-white/10 to-transparent hidden lg:block" />
-
           {WORKFLOW_STEPS.map((step, i) => (
             <div key={i} className="relative group">
               <div className="bg-white/5 hover:bg-white/8 border border-white/10 hover:border-white/20 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 text-center">
@@ -40,11 +37,6 @@ export default function WorkflowSection() {
                 <h3 className="font-semibold text-base mb-3">{step.title}</h3>
                 <p className="text-white/60 text-sm leading-relaxed">{step.description}</p>
               </div>
-              {i < WORKFLOW_STEPS.length - 1 && (
-                <div className="hidden lg:flex absolute top-12 -right-3 z-10">
-                  <ArrowRight className="w-6 h-6 text-white/20" />
-                </div>
-              )}
             </div>
           ))}
         </div>
